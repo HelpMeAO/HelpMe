@@ -1,0 +1,44 @@
+/****************/
+/* Nav styling  */
+/****************/
+
+nav {
+    background-color: #EB5E55;
+}
+
+/****************/
+/* Text styling */
+/****************/
+
+h4.header {
+    color: rgba(0, 0, 0, 0.709804);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+}
+
+p.caption {
+    color: rgba(0, 0, 0, 0.709804);
+    display: block;
+    font-family: Roboto, sans-serif;
+    font-size: 18.75px;
+    font-weight: 300;
+    height: 56px;
+    line-height: 28.125px;
+    margin-bottom: 30px;
+    text-size-adjust: 100%;
+    width: 859.838px;
+    -webkit-font-smoothing: antialiased;
+    -webkit-margin-after: 30px;
+    -webkit-margin-before: 18.75px;
+    -webkit-margin-end: 0px;
+    -webkit-margin-start: 0px;
+}
+
+/*****************************/
+/* Question page div styling */
+/*****************************/
+
+div.questions {
+	margin-top: 40px;
+
+}
