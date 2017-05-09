@@ -1,8 +1,11 @@
 'use strict';
 
 var express = require('express');
+var bodyParser = require('body-parser');
 
 var router = express.Router();
+
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 /*** Tickets Logic ***/
 
@@ -10,8 +13,9 @@ router.get('/tickets', function(req, res) {
   res.json({message: "LIST"});
 });
 
-router.post('/tickets', function(req, res) {
-  var todo = req.body;
+router.post('/tickets', urlencodedParser, function(req, res) {
+  var ticket = req.body;
+  console.log(req.body);
 });
 
 router.put('/tickets/:id', function(req, res) {
