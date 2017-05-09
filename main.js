@@ -2,8 +2,8 @@
 
 // Add Express & API Router
 var express = require("express");
-var router = require("./api");
-var pagesRouter = require("./pages");
+var router = require("./routes/api");
+var pagesRouter = require("./routes/pages");
 
 // Start express
 var app = express();
