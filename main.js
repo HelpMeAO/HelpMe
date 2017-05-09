@@ -5,12 +5,16 @@ var express = require("express");
 var router = require("./routes/api");
 var pagesRouter = require("./routes/pages");
 
+// Add the single-sign-on Router
+var auth = require("./routes/auth"); 
+
 // Start express
 var app = express();
 
 // Add the Pages and API router
-app.use("/", pagesRouter)
+app.use("/", pagesRouter);
 app.use('/api', router);
+app.use('/auth', auth);
 
 // Make the CSS/JS folder available
 app.use("/css", express.static("css"));
