@@ -16,9 +16,10 @@ app.use("/", pagesRouter);
 app.use('/api', router);
 // app.use('/auth', auth);
 
-// Make the CSS/JS folder available
+// Make the CSS/JS/Images folder available
 app.use("/css", express.static("css"));
 app.use("/js", express.static("js"));
+app.use("/img", express.static("img"));
 
 // The app is now running on port 80
 app.listen(80);

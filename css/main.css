@@ -1,9 +1,12 @@
 /****************/
 /* Nav styling  */
 /****************/
-
 nav {
     background-color: #EB5E55;
+}
+
+.brand-logo img{
+    height: 60px;
 }
 
 /****************/
@@ -39,6 +42,25 @@ p.caption {
 /*****************************/
 
 div.questions {
-	margin-top: 40px;
+    margin-top: 40px;
+
+}
+
+/*****************************/
+/* queue page div styling */
+/*****************************/
+
+.bg-green{
+   background-color: rgb(66, 244, 107);
+   border-bottom: 1px solid #F0F2EF;
+   color: #FCFCFC;
+   text-align: center;
+}
+
+.bg-red{
+    background-color: #ee6e73;
+    border-bottom: 1px solid #F0F2EF;
+    color: #FCFCFC;
+    text-align: center;
 
 }
