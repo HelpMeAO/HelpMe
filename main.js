@@ -5,8 +5,18 @@ var express = require("express");
 var router = require("./routes/api");
 var pagesRouter = require("./routes/pages");
 
+// Add Firebase Admin
+var admin = require("firebase-admin");
+// Add Service Account for Firebase etc.
+var serviceAccount = require('./ticketmastertest-110a9-firebase-adminsdk-g3hru-c3393e383b.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://ticketmastertest-110a9.firebaseio.com"
+});
+
 // Add the single-sign-on Router
-// var auth = require("./routes/auth"); 
+// var auth = require("./routes/auth");
 
 // Start express
 var app = express();
