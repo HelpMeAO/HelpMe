@@ -2,14 +2,44 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var firebase = require("firebase-admin");
+var serviceAccount = require('../../ticketmastertest-110a9-firebase-adminsdk-g3hru-c3393e383b.json');
+
+// Add the single-sign-on Router
+// var auth = require("./routes/auth");
+
+/**********************/
+/*** Firebase Logic ***/
+/**********************/
+
+
+// Initialize Firebase
+firebase.initializeApp({
+  credential: firebase.credential.cert(serviceAccount),
+  databaseURL: "https://ticketmastertest-110a9.firebaseio.com"
+});
+
+// Create reference(s) to the database
+var database = firebase.database();
+var tickets = firebase.database().ref("tickets");
 
 var router = express.Router();
-
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
+/*********************/
 /*** Tickets Logic ***/
+/*********************/
+
 
 router.get('/tickets', function(req, res) {
+  tickets.orderByChild("teacher")
+    .once("value")
+    .then(function(snapshot) {
+      res.json(snapshot.val());
+    });
+});
+
+router.get('/tickets/:id', function(req, res) {
   res.json({message: "LIST"});
 });
 
@@ -29,7 +59,9 @@ router.delete('/tickets/:id', function(req, res) {
   res.json({ message: 'Todo Deleted' });
 });
 
+/******************/
 /*** Tags Logic ***/
+/******************/
 
 router.get('/tags', function(req, res) {
   res.json({tags: ["Node.js", "JavaScript", "HTML", "CSS"]});
