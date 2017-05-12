@@ -18,4 +18,8 @@ router.get("/tags", function(req, res) {
 	res.sendFile(__dirname + "/tags.html");
 });
 
+router.get("/addtag", function(req, res) {
+	res.sendFile(__dirname + "/addtag.html");
+});
+
 module.exports = router;
