@@ -24,7 +24,7 @@ var database = firebase.database();
 var tickets = firebase.database().ref("tickets");
 
 var router = express.Router();
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 /*********************/
 /*** Tickets Logic ***/
@@ -45,7 +45,12 @@ router.get('/tickets/:id', function(req, res) {
 
 router.post('/tickets', urlencodedParser, function(req, res) {
   var ticket = req.body;
-  console.log(req.body);
+  tickets.push().set({
+    "description": req.body.description,
+    "tags": req.body.tags,
+    "student": "99033279",
+    "teacher": ""
+  });
 });
 
 router.put('/tickets/:id', function(req, res) {
