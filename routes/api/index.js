@@ -22,6 +22,7 @@ firebase.initializeApp({
 // Create reference(s) to the database
 var database = firebase.database();
 var tickets = firebase.database().ref("tickets");
+var tags = firebase.database().ref("tags");
 
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -72,8 +73,13 @@ router.get('/tags', function(req, res) {
   res.json({tags: ["Node.js", "JavaScript", "HTML", "CSS"]});
 });
 
-router.post('/tags', function(req, res) {
-  res.json({message: "tag successfully added"});
+router.post('/tags', urlencodedParser, function(req, res) {
+  var tag = req.body;
+  tags.push().set({
+    "description": req.body.tagdescription,
+    "name": req.body.tagname
+  });
+  res.json({ message: 'tag toegevoegt' });
 });
 
 router.put('/tags/:id', function(req, res) {
