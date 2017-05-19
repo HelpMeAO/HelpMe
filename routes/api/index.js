@@ -70,7 +70,9 @@ router.delete('/tickets/:id', function(req, res) {
 /******************/
 
 router.get('/tags', function(req, res) {
-  res.json({tags: ["Node.js", "JavaScript", "HTML", "CSS"]});
+  tags.once('value', function(tagSnapshot) {
+    res.json(tagSnapshot.val());
+  });
 });
 
 router.post('/tags', urlencodedParser, function(req, res) {
