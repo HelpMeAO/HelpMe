@@ -70,12 +70,12 @@ div.questions {
 /*****************************/
 
 
-form.login-form {
+div.login-form {
     margin-top: 60px !important;
     padding-top: 10px !important;
 }
 
-form.login-form button {
+div.login-form button {
     margin-bottom: 30px;
 }
 

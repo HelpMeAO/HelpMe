@@ -16,6 +16,7 @@ var serviceAccount = require('../../ticketmastertest-110a9-firebase-adminsdk-g3h
 // Initialize Firebase
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
+  authDomain: "ticketmastertest-110a9.firebaseapp.com",
   databaseURL: "https://ticketmastertest-110a9.firebaseio.com"
 });
 

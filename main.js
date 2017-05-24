@@ -28,6 +28,7 @@ app.use('/api', router);
 app.use("/css", express.static("css"));
 app.use("/js", express.static("js"));
 app.use("/img", express.static("img"));
+app.use("/api", express.static("api"));
 
 // The app is now running on port 80
 app.listen(80);
