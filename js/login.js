@@ -1,22 +1,6 @@
 (function () {
 //Login
-var firebase = require("firebase-admin");
-var serviceAccount = require('../../ticketmastertest-110a9-firebase-adminsdk-g3hru-c3393e383b.json');
 
-// Add the single-sign-on Router
-// var auth = require("./routes/auth");
-
-/**********************/
-/*** Firebase Logic ***/
-/**********************/
-
-
-// Initialize Firebase
-firebase.initializeApp({
-  credential: firebase.credential.cert(serviceAccount),
-  authDomain: "ticketmastertest-110a9.firebaseapp.com",
-  databaseURL: "https://ticketmastertest-110a9.firebaseio.com"
-});
 
 //Get elements
 
@@ -35,7 +19,7 @@ btnLogin.addEventListener('click', e=> {
 	var pass = txtPassword.value;
 	var auth = firebase.auth()
 	//Sign in
-	var promise = auth.signIWithEmailAndPassword(email,pass);
+	var promise = auth.signInWithEmailAndPassword(email,pass);
 	promise.catch(e => console.log(e.message));
 });
 
@@ -43,6 +27,7 @@ btnLogin.addEventListener('click', e=> {
 firebase.auth().onAuthStateChanged(firebaseUser => {
 	if (firebaseUser){
 		console.log(firebaseUser);
+		console.log("signed in");
 	}else{
 		console.log("not logged in");
 	}
