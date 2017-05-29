@@ -7,7 +7,6 @@
 var txtEmail = document.getElementById('txtEmail');
 var txtPassword = document.getElementById('txtPassword');
 var btnLogin = document.getElementById('btnLogin');
-var btnSignUp = document.getElementById('btnSignUp');
 var btnLogout = document.getElementById('btnLogout');
 
 
