@@ -76,11 +76,19 @@ router.get('/tags', function(req, res) {
 });
 
 router.post('/tags', urlencodedParser, function(req, res) {
-  var tag = req.body;
-  tags.push().set({
-    "description": req.body.tagdescription,
-    "name": req.body.tagname
-  });
+  if(typeof req.body.id !== 'undefined') {
+    
+    tags.child(req.body.id).set({
+      "description": req.body.tagDescription,
+      "name": req.body.tagName
+    });
+  } else {
+    // tags.push().set({
+    //   "description": req.body.tagDescription,
+    //   "name": req.body.tagName
+    // });
+    console.log('nope');
+  }
   res.redirect(req.get('referer'));
 });
 

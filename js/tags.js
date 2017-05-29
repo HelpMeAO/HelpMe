@@ -17,7 +17,7 @@
 
 	var TagsUI = {
 		// Create a way to generate the html for the form.
-		generateFormHTML: function(name, description) {
+		generateFormHTML: function(id, name, description) {
 			name = name || "";
 			description = description || "";
 
@@ -51,6 +51,14 @@
 							tagDescription.name = "tagDescription";
 							tagDescription.placeholder = "Vul hier de beschrijving in van de tag";
 							tagDescription.value = description;
+							if(typeof id !== 'undefined') {
+								var tagId = document.createElement('input');
+								tagId.type = "hidden";
+								tagId.name = "id";
+								tagId.value = id;
+								inputField.appendChild(tagId);
+							}
+
 							var submit = document.createElement('button');
 							submit.className = "btn waves-effect waves-light";
 							submit.type = "submit";
@@ -77,7 +85,7 @@
 
 		},
 		// Create a way to generate the html for the tags.
-		generateTagHTML: function(id, title, text) {
+		generateTagHTML: function(selector, title, text) {
     		var col = document.createElement('div');
     		col.className = "col s12 m6";
     		var card = document.createElement('div');
@@ -99,10 +107,12 @@
     		var cardAction = document.createElement('div');
     		cardAction.className = "card-action";
     			var cardChange = document.createElement('a');
+    			cardChange.id = "edit";
     			cardChange.href = "#";										// The Change link goes here.
     			var changeText = document.createTextNode("Wijzig");
     			cardChange.appendChild(changeText);
     			var cardRemove = document.createElement('a');
+    			cardRemove.id = "remove";
     			cardRemove.href = "#";										// The Remove link goes here.
     			var removeText = document.createTextNode("Verwijder");
     			cardRemove.appendChild(removeText);
@@ -115,7 +125,7 @@
 
     		col.appendChild(card);
 
-    		document.querySelector(id).appendChild(col);					// The id for the querySelector goes here.
+    		document.querySelector(selector).appendChild(col);					// The id for the querySelector goes here.
 
     		return col;
 		},
@@ -160,16 +170,35 @@
 
 			xhr.send(data);
 		},
+		displayForm: function(id, name, description) {
+			if (typeof id !== 'undefined'){
+				var editor = TagsUI.generateFormHTML(id, name, description);
+			} else {
+				var editor = TagsUI.generateFormHTML();
+			}
+				var container = document.querySelector(".editor");
+				container.removeChild(container.firstChild);
+				container.appendChild(editor);
+		},
 		addEventListeners: function() {
 			var addButton = document.querySelector(".addButton");
 			addButton.addEventListener('click', function() {
+				TagsUI.displayForm();
+			});
+			var list = document.querySelector('.tagsList');
+			list.addEventListener('click', function(event) {
+				if(event.target.tagName === 'A') {
+					for(var i = 0; i < tagsList.list.length; i++) {
+						if(event.path[3] === tagsList.list[i].ref) {		
+							if(event.target.id === 'edit') {
+								TagsUI.displayForm(tagsList.list[i].id, tagsList.list[i].name, tagsList.list[i].description);
+							}
+							if(event.target.id === 'remove') {
 
-				var editor = TagsUI.generateFormHTML();
-				var container = document.querySelector(".editor");
-				container.removeChild(container.firstChild);
-				console.log(container);
-				console.log(editor);
-				container.appendChild(editor);
+							}							
+						}
+					}
+				}
 			});
 		}
 		// Create a way to remove a tag from the html.
