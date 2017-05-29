@@ -7,17 +7,77 @@
 		this.list.push(tag);
 	}
 	// Creates a single Tag constructor for the Tags list. parameters: string.
-	function Tag(name, description) {
+	function Tag(id, name, description, ref) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.ref = ref;
 	}
-	var tag = new Tag("Test", "This a test");
-	var tagsList = new Tags([tag]);
-	console.log(tagsList);
+	var tagsList = new Tags();
 
 	var TagsUI = {
+		// Create a way to generate the html for the form.
+		generateFormHTML: function(name, description) {
+			name = name || "";
+			description = description || "";
+
+    		var editor = document.createElement('div');
+
+	    		var header = document.createElement('h4');
+	    		header.className = "header";
+	    			var headerText = document.createTextNode("Voeg een tag toe.");
+	    		header.appendChild(headerText);
+
+	    		var caption = document.createElement('p');
+	    		caption.className = "caption";
+	    			var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
+	    		caption.appendChild(captionText);
+
+	    		var form = document.createElement('form');
+	    		form.className = "col s12";
+	    		form.action = "/api/tags";
+	    		form.method = "post";
+					var row = document.createElement('div');
+					row.className = "row";
+						var inputField = document.createElement('div');
+						inputField.className = "input-field col s12";
+							var tagName = document.createElement('input');
+							tagName.type = "text";
+							tagName.name = "tagName";
+							tagName.placeholder = "Voer hier de naam in van de Tag";
+							tagName.value = name;
+							var tagDescription = document.createElement('input');
+							tagDescription.type = "text";
+							tagDescription.name = "tagDescription";
+							tagDescription.placeholder = "Vul hier de beschrijving in van de tag";
+							tagDescription.value = description;
+							var submit = document.createElement('button');
+							submit.className = "btn waves-effect waves-light";
+							submit.type = "submit";
+							submit.name = "action";
+								var submitText = document.createTextNode("Submit");
+							submit.appendChild(submitText);
+								var icon = document.createElement("i");
+								icon.className = "material-icons right";
+									var iconText = document.createTextNode("send");
+								icon.appendChild(iconText);
+							submit.appendChild(icon);
+						inputField.appendChild(tagName);
+						inputField.appendChild(tagDescription);
+						inputField.appendChild(submit);
+					row.appendChild(inputField);
+				form.appendChild(row);
+			editor.appendChild(header);
+			editor.appendChild(caption);
+			editor.appendChild(form);
+			
+
+			return editor;
+
+
+		},
 		// Create a way to generate the html for the tags.
-		generateHTML: function(id, title, text) {
+		generateTagHTML: function(id, title, text) {
     		var col = document.createElement('div');
     		col.className = "col s12 m6";
     		var card = document.createElement('div');
@@ -60,29 +120,64 @@
     		return col;
 		},
 		// Create a way to add a tag to the html.
-		displayTag: function(title, text) {
-			this.generateHTML(".tagsList", title, text);
+		displayTag: function(id, title, text) {
+			var ref = this.generateTagHTML(".tagsList", title, text);
+			tagsList.add(new Tag(id, title, text, ref));
+			console.log(tagsList.list);
 		},
-		getTagsJSON: function() {
+		getTagsJSON: function(callback) {
 			var xhr = new XMLHttpRequest();
-			xhr.open("GET", "/api/tags", false);
+			xhr.onreadystatechange = function() {
+    			if (this.readyState == 4 && this.status == 200) {
+    				if(typeof callback == 'function') {
+	   					callback.call(xhr);
+    				}
+
+			    }
+			};
+			xhr.open("GET", "/api/tags", true);
   			xhr.send();
-  			var tags = JSON.parse(xhr.response);
-  			return tags;
 		},
-		displayTags: function() {
-			var tagsJSON = this.getTagsJSON();
-			for (var key in tagsJSON) {
- 				if (tagsJSON.hasOwnProperty(key)) {
- 					var name = tagsJSON[key].name;
- 					var description = tagsJSON[key].description;
-    				this.displayTag(name, description);
+		displayTags: function(tags) {
+			for (var key in tags) {
+ 				if (tags.hasOwnProperty(key)) {
+ 					var id = key;
+ 					var name = tags[key].name;
+ 					var description = tags[key].description;
+    				this.displayTag(id, name, description);
  				}
 			}
+		},
+		loadTags: function() {
+			this.getTagsJSON(function() {
+				var tags = JSON.parse(this.response);
+				TagsUI.displayTags(tags);
+			});
+		},
+		postTagsJSON: function(data) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "/api/tags", true);
+
+			xhr.send(data);
+		},
+		addEventListeners: function() {
+			var addButton = document.querySelector(".addButton");
+			addButton.addEventListener('click', function() {
+
+				var editor = TagsUI.generateFormHTML();
+				var container = document.querySelector(".editor");
+				container.removeChild(container.firstChild);
+				console.log(container);
+				console.log(editor);
+				container.appendChild(editor);
+			});
 		}
 		// Create a way to remove a tag from the html.
 
 		// Create a way to edit a tag in the html.
 	}
-	TagsUI.displayTags();
+	TagsUI.loadTags();
+	TagsUI.addEventListeners();
+
+	// TagsUI.generateFormHTML();
 // });

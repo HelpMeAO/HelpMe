@@ -70,7 +70,7 @@ router.delete('/tickets/:id', function(req, res) {
 /******************/
 
 router.get('/tags', function(req, res) {
-  tags.once('value', function(tagSnapshot) {
+  tags.orderByChild('name').once('value', function(tagSnapshot) {
     res.json(tagSnapshot.val());
   });
 });
@@ -81,7 +81,7 @@ router.post('/tags', urlencodedParser, function(req, res) {
     "description": req.body.tagdescription,
     "name": req.body.tagname
   });
-  res.json({ message: 'tag toegevoegt' });
+  res.redirect(req.get('referer'));
 });
 
 router.put('/tags/:id', function(req, res) {
