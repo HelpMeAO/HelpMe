@@ -6,6 +6,7 @@
 
 var txtEmail = document.getElementById('txtEmail');
 var txtPassword = document.getElementById('txtPassword');
+var txtUser = document.getElementById('txtUser');
 var btnLogin = document.getElementById('btnLogin');
 var btnSignup = document.getElementById('btnSignup');
 var btnLogout = document.getElementById('btnLogout');
@@ -39,18 +40,6 @@ btnLogout.addEventListener('click', e=> {
 	console.log("signed Out");
 });
 
-// var firebaseuser = firebase.auth().currentUser;
-
-// if (firebaseuser != null) {
-//   user.providerData.forEach(function (profile) {
-//     console.log("Sign-in provider: "+profile.providerId);
-//     console.log("  Provider-specific UID: "+profile.uid);
-//     console.log("  Name: "+profile.displayName);
-//     console.log("  Email: "+profile.email);
-//     console.log("  Photo URL: "+profile.photoURL);
-//   });
-// }
-
 //Add a realtime listener
 // remove or add hide class for logout button
 firebase.auth().onAuthStateChanged(firebaseUser => {
@@ -58,6 +47,16 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 		console.log(firebaseUser);
 		console.log("signed in");
 		btnLogout.classList.remove("hide");
+
+		// firebaseUser.updateProfile({
+  //       displayName: "damianvanes"
+  //   	}).then(function() {
+  //       	// Update successful.
+  //   	}, function(error) {
+  //       	// An error happened.
+  //   	});
+
+		console.log(firebaseUser.displayName);
 	}else{
 		console.log("not logged in");
 		btnLogout.classList.add("hide");
