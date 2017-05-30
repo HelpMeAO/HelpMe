@@ -1,11 +1,47 @@
-/****************/
-/* Nav styling  */
-/****************/
-
+/*************************/
+/*Colors from coolors.co*/
+/*************************/
 
 .ccblue{
     color:#3893C3;
 }
+
+.ccred{
+    color:#EB5E55;
+}
+.ccsalmom{
+    color: #FAA275;
+}
+
+.ccbaby{
+    color:#FCFCFC;
+}
+.ccwhite{
+    color:#F0F2EF; 
+}
+
+.ccblue-bg{
+    background-color:#3893C3;
+}
+
+.ccred-bg{
+    background-color:#EB5E55;
+}
+.ccsalmom-bg{
+   background-color: #FAA275;
+}
+
+.ccbaby-bg{
+    background-color:#FCFCFC;
+}
+.ccwhite-bg{
+    background-color:#F0F2EF; 
+}
+
+/****************/
+/* Nav styling  */
+/****************/
+
 nav {
     background-color: #EB5E55;
 }
