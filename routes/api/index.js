@@ -33,7 +33,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 
 router.get('/tickets', function(req, res) {
-  tickets.orderByChild("teacher")
+  tickets.orderByChild("timeAdded")
     .once("value")
     .then(function(snapshot) {
       res.json(snapshot.val());
@@ -41,28 +41,42 @@ router.get('/tickets', function(req, res) {
 });
 
 router.get('/tickets/:id', function(req, res) {
-  res.json({message: "LIST"});
+  var specificTicket = firebase.database().ref("tickets/" + req.params.id);
+  specificTicket.once("value")
+  .then(function(snapshot) {
+    res.json(snapshot.val());
+  });
 });
 
 router.post('/tickets', urlencodedParser, function(req, res) {
   var ticket = req.body;
+  var currentTime = Date.now();
   tickets.push().set({
     "description": req.body.description,
     "tags": req.body.tags,
     "student": "99033279",
-    "teacher": ""
+    "teacher": "",
+    "timeAdded": currentTime
   });
 });
 
 router.put('/tickets/:id', function(req, res) {
-  var id = req.params.id;
-  var todo = req.body;
-  res.json({ 'todo': todo, message: 'Todo Updated' });
+  var specificTicket = firebase.database().ref("tickets/" + req.params.id);
+  var oldTime = req.body.timeAdded;
+  specificTicket.set({
+    "description": req.body.description,
+    "tags": req.body.tags,
+    "student": "99033279",
+    "teacher": "",
+    "timeAdded": oldTime
+  });
+  res.json({ 'Ticket': req.params.id, message: 'Todo Updated' });
 });
 
 router.delete('/tickets/:id', function(req, res) {
-  var id = req.params.id;
-  res.json({ message: 'Todo Deleted' });
+  var specificTicket = firebase.database().ref("tickets/" + req.params.id);
+  specificTicket.remove();
+  res.json({ message: 'Todo: ' + req.params.id + ' Deleted' });
 });
 
 /******************/
@@ -70,26 +84,28 @@ router.delete('/tickets/:id', function(req, res) {
 /******************/
 
 router.get('/tags', function(req, res) {
-  tags.orderByChild('name').once('value', function(tagSnapshot) {
-    res.json(tagSnapshot.val());
-  });
+    tags.orderByChild("name")
+    .once('value')
+    .then(function(tagSnapshot) {
+      res.json(tagSnapshot.val());
+    });
+});
+
+router.get('/tags/:id', function(req, res) {
+    var specificTag = firebase.database().ref("tags/" + req.params.id);
+    specificTag.once("value")
+    .then(function(snapshot) {
+      res.json(snapshot.val());
+    });
 });
 
 router.post('/tags', urlencodedParser, function(req, res) {
-  if(typeof req.body.id !== 'undefined') {
-    
-    tags.child(req.body.id).set({
-      "description": req.body.tagDescription,
-      "name": req.body.tagName
-    });
-  } else {
-    // tags.push().set({
-    //   "description": req.body.tagDescription,
-    //   "name": req.body.tagName
-    // });
-    console.log('nope');
-  }
-  res.redirect(req.get('referer'));
+  var tag = req.body;
+  tags.push().set({
+    "description": tag.tagdescription,
+    "name": tag.tagname
+  });
+  res.json({ message: 'tag toegevoegt' });
 });
 
 router.put('/tags/:id', function(req, res) {
@@ -99,7 +115,8 @@ router.put('/tags/:id', function(req, res) {
 });
 
 router.delete('/tags/:id', function(req, res) {
-  var id = req.params.id;
+  var specificTag = firebase.database().ref("tags/" + req.params.id);
+
   res.json({ message: 'tag Deleted' });
 });
 
