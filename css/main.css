@@ -1,6 +1,11 @@
 /****************/
 /* Nav styling  */
 /****************/
+
+
+.ccblue{
+    color:#3893C3;
+}
 nav {
     background-color: #EB5E55;
 }
@@ -75,8 +80,9 @@ div.login-form {
     padding-top: 10px !important;
 }
 
-div.login-form button {
-    margin-bottom: 30px;
+.btn_login,
+.btn_login:hover{
+    background-color:#3893C3;
 }
 
 a.password-link {
