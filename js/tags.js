@@ -1,5 +1,11 @@
 // $(document).ready(function() {
 	// Creates a Tags constructor for listing. parameter: array.
+	var TagsUI = new TagsUI();
+	var tagsList = new Tags();
+
+	TagsUI.loadTags();
+	TagsUI.addEventListeners();
+	
 	function Tags(tags) {
 		this.list = tags || [];
 	}
@@ -13,11 +19,10 @@
 		this.description = description;
 		this.ref = ref;
 	}
-	var tagsList = new Tags();
 
-	var TagsUI = {
+	function TagsUI () {
 		// Create a way to generate the html for the form.
-		generateFormHTML: function(id, name, description) {
+		this.generateFormHTML =  function(id, name, description) {
 			name = name || "";
 			description = description || "";
 
@@ -78,14 +83,14 @@
 			editor.appendChild(header);
 			editor.appendChild(caption);
 			editor.appendChild(form);
-			
+
 
 			return editor;
 
 
 		},
 		// Create a way to generate the html for the tags.
-		generateTagHTML: function(selector, title, text) {
+		this.generateTagHTML =  function(selector, title, text) {
     		var col = document.createElement('div');
     		col.className = "col s12 m6";
     		var card = document.createElement('div');
@@ -130,25 +135,25 @@
     		return col;
 		},
 		// Create a way to add a tag to the html.
-		displayTag: function(id, title, text) {
+		this.displayTag =  function(id, title, text) {
 			var ref = this.generateTagHTML(".tagsList", title, text);
 			tagsList.add(new Tag(id, title, text, ref));
 			console.log(tagsList.list);
 		},
-		getTagsJSON: function(callback) {
+		this.getTagsJSON =  function(callback) {
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
-    			if (this.readyState == 4 && this.status == 200) {
-    				if(typeof callback == 'function') {
-	   					callback.call(xhr);
-    				}
+  			if (this.readyState == 4 && this.status == 200) {
+  				if(typeof callback == 'function') {
+   					callback.call(xhr);
+  				}
 
-			    }
+		    }
 			};
 			xhr.open("GET", "/api/tags", true);
-  			xhr.send();
+  		xhr.send();
 		},
-		displayTags: function(tags) {
+		this.displayTags = function(tags) {
 			for (var key in tags) {
  				if (tags.hasOwnProperty(key)) {
  					var id = key;
@@ -158,29 +163,29 @@
  				}
 			}
 		},
-		loadTags: function() {
+		this.loadTags =  function() {
 			this.getTagsJSON(function() {
 				var tags = JSON.parse(this.response);
 				TagsUI.displayTags(tags);
 			});
 		},
-		postTagsJSON: function(data) {
+		this.postTagsJSON =  function(data) {
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "/api/tags", true);
 
 			xhr.send(data);
 		},
-		displayForm: function(id, name, description) {
+		this.displayForm =  function(id, name, description) {
 			if (typeof id !== 'undefined'){
 				var editor = TagsUI.generateFormHTML(id, name, description);
 			} else {
 				var editor = TagsUI.generateFormHTML();
 			}
-				var container = document.querySelector(".editor");
-				container.removeChild(container.firstChild);
-				container.appendChild(editor);
+			var container = document.querySelector(".editor");
+			container.removeChild(container.firstChild);
+			container.appendChild(editor);
 		},
-		addEventListeners: function() {
+		this.addEventListeners =  function() {
 			var addButton = document.querySelector(".addButton");
 			addButton.addEventListener('click', function() {
 				TagsUI.displayForm();
@@ -189,13 +194,13 @@
 			list.addEventListener('click', function(event) {
 				if(event.target.tagName === 'A') {
 					for(var i = 0; i < tagsList.list.length; i++) {
-						if(event.path[3] === tagsList.list[i].ref) {		
+						if(event.path[3] === tagsList.list[i].ref) {
 							if(event.target.id === 'edit') {
 								TagsUI.displayForm(tagsList.list[i].id, tagsList.list[i].name, tagsList.list[i].description);
 							}
 							if(event.target.id === 'remove') {
 
-							}							
+							}
 						}
 					}
 				}
@@ -205,8 +210,6 @@
 
 		// Create a way to edit a tag in the html.
 	}
-	TagsUI.loadTags();
-	TagsUI.addEventListeners();
 
 	// TagsUI.generateFormHTML();
 // });

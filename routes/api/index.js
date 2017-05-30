@@ -75,7 +75,6 @@ router.put('/tickets/:id', function(req, res) {
 
 router.delete('/tickets/:id', function(req, res) {
   var specificTicket = firebase.database().ref("tickets/" + req.params.id);
-  specificTicket.remove();
   res.json({ message: 'Todo: ' + req.params.id + ' Deleted' });
 });
 
@@ -103,20 +102,26 @@ router.post('/tags', urlencodedParser, function(req, res) {
   var tag = req.body;
   tags.push().set({
     "description": tag.tagdescription,
-    "name": tag.tagname
+    "name": tag.tagname,
+    "active": true
   });
   res.json({ message: 'tag toegevoegt' });
 });
 
 router.put('/tags/:id', function(req, res) {
-  var id = req.params.id;
-  var todo = req.body;
+  var specificTag = firebase.database().ref("tags/" + req.params.id);
+  specificTag.set({
+    "description": tag.tagdescription,
+    "name": tag.tagname
+  });
   res.json({ 'tags': tags, message: 'Todo Updated' });
 });
 
 router.delete('/tags/:id', function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
-
+  specificTag.set({
+    "active": false
+  })
   res.json({ message: 'tag Deleted' });
 });
 
