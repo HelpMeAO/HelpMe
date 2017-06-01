@@ -48,6 +48,8 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 		console.log("signed in");
 		btnLogout.classList.remove("hide");
 
+		//set displayname
+
 		// firebaseUser.updateProfile({
   //       displayName: "damianvanes"
   //   	}).then(function() {

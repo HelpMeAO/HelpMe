@@ -117,7 +117,8 @@ div.login-form {
 }
 
 .btn_login,
-.btn_login:hover{
+.btn_login:hover,
+.btn_login:visited{
     background-color:#3893C3;
 }
 
