@@ -52,9 +52,14 @@ router.get('/tickets/:id', function(req, res) {
 router.post('/tickets', urlencodedParser, function(req, res) {
   var ticket = req.body;
   var currentTime = Date.now();
+   if(req.body.tags.length == 1) {
+     var tags = [req.body.tags];
+   } else {
+     var tags = req.body.tags;
+   }
   tickets.push().set({
     "description": req.body.description,
-    "tags": req.body.tags,
+    "tags": tags,
     "student": "99033279",
     "teacher": "",
     "timeAdded": currentTime
