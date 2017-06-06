@@ -25,9 +25,9 @@ $(document).ready(function() {
         tdName.className = "name";
         tdName.innerHTML = obj.student;
         tr.appendChild(tdName);
-
         // Create Tag td
         var tdTag = document.createElement("td");
+        if(typeof(obj.tags) == "object") {
           for(var i = 0; i < obj.tags.length; i ++) {
             var tagChip = document.createElement("div");
             tagChip.className = "chip";
@@ -36,6 +36,14 @@ $(document).ready(function() {
             // Add the just generated chip to tdTag
             tdTag.appendChild(tagChip);
           }
+        } else {
+          var tagChip = document.createElement("div");
+          tagChip.className = "chip";
+          // Get the tag value from the array
+          tagChip.innerHTML = obj.tags;
+          // Add the just generated chip to tdTag
+          tdTag.appendChild(tagChip);
+        }
         tr.appendChild(tdTag);
 
         // Create Teacher td
