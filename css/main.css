@@ -125,3 +125,51 @@ div.login-form {
 a.password-link {
     margin-top: 10px;
 }
+
+/****************/
+/* Tags styling */
+/****************/
+
+.col{
+    transition: .4s all;
+}
+.cardRemove{
+    position: relative;
+}
+.confirmDiv{
+    transition: .4s all;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 10px;
+    left: 40px;
+    background-color: white;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    text-transform: none;
+    overflow: hidden;
+    color: black;
+    z-index: 10;
+    line-height: 30px;
+    padding: 5px 10px;
+}
+.confirmDiv.active{
+    height: 72px;
+    width: 225px;
+    opacity: 1;
+}
+.confirmDelete{
+    position: absolute;
+    width: 225px;
+    height: 72px; 
+}
+.confirmDelete a{
+    transition: .5s all;
+    margin: -6px 0 0 5px;
+    padding: 0;
+    line-height: 28px;
+    width: 50px;
+    height: 25px;
+    color: #FFF;
+}

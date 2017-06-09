@@ -78,48 +78,25 @@
 		},
 		// Create a way to generate the html for the tags.
 		this.generateTagHTML =  function(selector, title, text, id) {
-    		var col = document.createElement('div');
+    		var html = '<div data-id="'+id+'" class="card blue-grey darken-1">'
+				html += 	'<div class="card-content white-text">'
+				html +=			'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'
+				html +=		'</div>'
+				html +=		'<div class="card-action">'
+				html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'
+				html +=			'<a href="javascript:void(0)" class="deleteTag">Verwijder</a>'
+				html +=			'<div class="confirmDiv">'
+				html +=				'<span class="confirmDelete">Weet u zeker dat u deze tag wilt verwijderen?'
+				html +=					'<a class="deleteTagConfirm btn waves-effect waves-light">Ja</a>'
+				html +=					'<a class="deleteTagCancel btn waves-effect waves-light">Nee</a>'
+				html +=				'</span>'
+				html +=			'</div>'
+				html +=		'</div>'
+				html += '</div>'
+    		var col 		= document.createElement('div');
     		col.className = "col s12 m6";
-    		var card = document.createElement('div');
-    		card.className = "card blue-grey darken-1";						// Color change for the future?????
-
-    		var cardContent = document.createElement('div');
-    		cardContent.className = "card-content white-text";
-    			var cardTitle = document.createElement('span');
-    			cardTitle.className = "card-title";
-    			var title = document.createTextNode(title); 				// Title goes here.
-    			cardTitle.appendChild(title);
-    			var cardText = document.createElement('p');
-    			var text = document.createTextNode(text); 					// Text goes here.
-    			cardText.appendChild(text);
-
-    		cardContent.appendChild(cardTitle);
-    		cardContent.appendChild(cardText);
-
-    		var cardAction = document.createElement('div');
-    		cardAction.className = "card-action";
-    			var cardChange = document.createElement('a');
-    			cardChange.id = "edit";
-    			cardChange.href = "#";										// The Change link goes here.
-    			var changeText = document.createTextNode("Wijzig");
-    			cardChange.appendChild(changeText);
-    			var cardRemove = document.createElement('a');
-    			cardRemove.id = "remove";
-    			cardRemove.href = "#";										// The Remove link goes here.
-    			var removeText = document.createTextNode("Verwijder");
-    			cardRemove.appendChild(removeText);
-
-    		cardAction.appendChild(cardChange);
-    		cardAction.appendChild(cardRemove);
-
-    		card.appendChild(cardContent);
-    		card.appendChild(cardAction);
-
-    		col.appendChild(card);
-    		col.dataset.id = id;
-
+     		col.innerHTML = html;
     		document.querySelector(selector).appendChild(col);					// The id for the querySelector goes here.
-
     		return col;
 		},
 		// Displays a single tag and adds it to the tagList object
@@ -178,6 +155,9 @@
 			var addButton = document.querySelector(".addButton");
 			addButton.addEventListener('click', function() {
 				TagsUI.displayForm();
+				el = $('.editor');
+				var pos = el.offset().top - 170;
+				$("html, body").animate({ scrollTop: pos }, 1400);
 			});
 			// Get a reference to the tagslist.
 			var list = $('.tagsList');
@@ -187,20 +167,22 @@
 				// Check if the click is on a anchor.
 				if(target.is('A')) {
 					var id = target.parent().parent().parent().data("id");
-					// Check if the click is on the edit.
-					if(target.is('#edit')) {
-						TagsUI.tagActions({
-							"method":"GET",
-							"id": id
-						},
-						function() {
-							var tag = JSON.parse(this.response);
-							TagsUI.displayForm(tag);
-						});
+					if(target.is('.changeTag')){
+
 					}
-					// check if the click is on the remove.
-					if(target.is('#remove')) {
-						console.log(event);
+					if(target.is('.deleteTag')){
+						$('.confirmDiv').removeClass('active');
+						$(target).siblings('.confirmDiv').addClass('active');
+					}
+					if(target.is('.deleteTagConfirm')){
+						card = $(target).parent().parent().parent().parent();
+						TagsUI.tagActions({'method':'DELETE', 'id' : card.data('id')});
+						card.parent().css("opacity", "0");
+						console.log(card.data('id'));
+  						setTimeout(function(){ card.parent().remove(); }, 400);
+					}
+					if(target.is('.deleteTagCancel')){
+						$(target).parent().parent().removeClass('active');
 					}
 				}
 			});
