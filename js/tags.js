@@ -167,8 +167,16 @@
 				// Check if the click is on a anchor.
 				if(target.is('A')) {
 					var id = target.parent().parent().parent().data("id");
-					if(target.is('.changeTag')){
-
+					Check if the click is on the edit.
+					if(target.is('.changeTag')) {
+						TagsUI.tagActions({
+							"method":"GET",
+							"id": id
+						},
+						function() {
+							var tag = JSON.parse(this.response);
+							TagsUI.displayForm(tag);
+						});
 					}
 					if(target.is('.deleteTag')){
 						$('.confirmDiv').removeClass('active');
