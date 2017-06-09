@@ -1,24 +1,9 @@
 // $(document).ready(function() {
 	// Creates a Tags constructor for listing. parameter: array.
 	var TagsUI = new TagsUI();
-	var tagsList = new Tags();
 
 	TagsUI.loadTags();
 	TagsUI.addEventListeners();
-	
-	function Tags(tags) {
-		this.list = tags || [];
-	}
-	Tags.prototype.add = function(tag) {
-		this.list.push(tag);
-	}
-	// Creates a single Tag constructor for the Tags list. parameters: string.
-	function Tag(id, name, description, ref) {
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.ref = ref;
-	}
 
 	function TagsUI () {
 		// Create a way to generate the html for the form.
@@ -26,22 +11,32 @@
 			name = name || "";
 			description = description || "";
 
+			if(typeof id !== 'undefined') {
+				var formAction = "/api/tags/" + id;
+				var formMethod = "put";
+				var headerText = document.createTextNode("Bewerk een tag.");
+				var captionText = document.createTextNode("Bewerk een tag, Verander de tagname en de beschrijving.");
+			} else {
+				var formAction = "/api/tags";
+				var formMethod = "post";
+				var headerText = document.createTextNode("Voeg een tag toe.");
+				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
+			}
+
     		var editor = document.createElement('div');
 
 	    		var header = document.createElement('h4');
 	    		header.className = "header";
-	    			var headerText = document.createTextNode("Voeg een tag toe.");
 	    		header.appendChild(headerText);
 
 	    		var caption = document.createElement('p');
 	    		caption.className = "caption";
-	    			var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
 	    		caption.appendChild(captionText);
 
 	    		var form = document.createElement('form');
 	    		form.className = "col s12";
-	    		form.action = "/api/tags";
-	    		form.method = "post";
+	    		form.action = formAction;
+	    		form.method = formMethod;
 					var row = document.createElement('div');
 					row.className = "row";
 						var inputField = document.createElement('div');
@@ -56,14 +51,6 @@
 							tagDescription.name = "tagDescription";
 							tagDescription.placeholder = "Vul hier de beschrijving in van de tag";
 							tagDescription.value = description;
-							if(typeof id !== 'undefined') {
-								var tagId = document.createElement('input');
-								tagId.type = "hidden";
-								tagId.name = "id";
-								tagId.value = id;
-								inputField.appendChild(tagId);
-							}
-
 							var submit = document.createElement('button');
 							submit.className = "btn waves-effect waves-light";
 							submit.type = "submit";
@@ -83,14 +70,14 @@
 			editor.appendChild(header);
 			editor.appendChild(caption);
 			editor.appendChild(form);
-
+			
 
 			return editor;
 
 
 		},
 		// Create a way to generate the html for the tags.
-		this.generateTagHTML =  function(selector, title, text) {
+		this.generateTagHTML =  function(selector, title, text, id) {
     		var col = document.createElement('div');
     		col.className = "col s12 m6";
     		var card = document.createElement('div');
@@ -129,29 +116,35 @@
     		card.appendChild(cardAction);
 
     		col.appendChild(card);
+    		col.dataset.id = id;
 
     		document.querySelector(selector).appendChild(col);					// The id for the querySelector goes here.
 
     		return col;
 		},
-		// Create a way to add a tag to the html.
+		// Displays a single tag and adds it to the tagList object
 		this.displayTag =  function(id, title, text) {
-			var ref = this.generateTagHTML(".tagsList", title, text);
-			tagsList.add(new Tag(id, title, text, ref));
-			console.log(tagsList.list);
+			// Generates the html and puts it in a reference.
+			var ref = this.generateTagHTML(".tagsList", title, text, id);
 		},
-		this.getTagsJSON =  function(callback) {
+		// tagActions
+		this.tagActions = function(action, callback) {
+			var apiURL = "/api/tags/";
+
+			if(typeof action.id !== 'undefined') {
+				apiURL = apiURL + action.id;
+			}
+			
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
-  			if (this.readyState == 4 && this.status == 200) {
-  				if(typeof callback == 'function') {
-   					callback.call(xhr);
-  				}
-
-		    }
+	  			if (this.readyState == 4 && this.status == 200) {
+	  				if(typeof callback == 'function') {
+	   					callback.call(xhr);
+	  				}
+			    }
 			};
-			xhr.open("GET", "/api/tags", true);
-  		xhr.send();
+			xhr.open(action.method, apiURL, true);
+  			xhr.send(action.data);
 		},
 		this.displayTags = function(tags) {
 			for (var key in tags) {
@@ -163,46 +156,61 @@
  				}
 			}
 		},
-		this.loadTags =  function() {
-			this.getTagsJSON(function() {
-				var tags = JSON.parse(this.response);
-				TagsUI.displayTags(tags);
-			});
-		},
-		this.postTagsJSON =  function(data) {
-			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "/api/tags", true);
-
-			xhr.send(data);
-		},
-		this.displayForm =  function(id, name, description) {
-			if (typeof id !== 'undefined'){
-				var editor = TagsUI.generateFormHTML(id, name, description);
+		this.displayForm =  function(tag) {
+			if(typeof tag !== 'undefined'){
+				var editor = this.generateFormHTML(tag.id, tag.name, tag.description);
 			} else {
-				var editor = TagsUI.generateFormHTML();
+				var editor = this.generateFormHTML();
 			}
+			
 			var container = document.querySelector(".editor");
 			container.removeChild(container.firstChild);
 			container.appendChild(editor);
+		},
+		this.loadTags =  function() {
+			this.tagActions({"method": "GET" }, 
+				function() {
+				var tags = JSON.parse(this.response);
+				TagsUI.displayTags(tags);
+			});
 		},
 		this.addEventListeners =  function() {
 			var addButton = document.querySelector(".addButton");
 			addButton.addEventListener('click', function() {
 				TagsUI.displayForm();
 			});
-			var list = document.querySelector('.tagsList');
-			list.addEventListener('click', function(event) {
-				if(event.target.tagName === 'A') {
-					for(var i = 0; i < tagsList.list.length; i++) {
-						if(event.path[3] === tagsList.list[i].ref) {
-							if(event.target.id === 'edit') {
-								TagsUI.displayForm(tagsList.list[i].id, tagsList.list[i].name, tagsList.list[i].description);
-							}
-							if(event.target.id === 'remove') {
-
-							}
-						}
+			// Get a reference to the tagslist.
+			var list = $('.tagsList');
+			// Add a event listener for clicks.
+			list.on('click', function(event) {
+				var target = $( event.target );
+				// Check if the click is on a anchor.
+				if(target.is('A')) {
+					var id = target.parent().parent().parent().data("id");
+					// Check if the click is on the edit.
+					if(target.is('#edit')) {
+						TagsUI.tagActions({
+							"method":"GET",
+							"id": id
+						},
+						function() {
+							var tag = JSON.parse(this.response);
+							TagsUI.displayForm(tag);
+						});
 					}
+					// check if the click is on the remove.
+					if(target.is('#remove')) {
+						console.log(event);
+					}
+				}
+			});
+			var editor = $('.editor');
+			editor.on('click', function(event) {
+				var target = $(event.target);
+				if(target.is('BUTTON')) {
+					event.preventDefault();
+					var tagName = editor.find('input[name="tagName"]').val();
+					var tagDescription = editor.find('input[name="tagDescription"]').val();
 				}
 			});
 		}

@@ -83,7 +83,7 @@ router.delete('/tickets/:id', function(req, res) {
 /*** Tags Logic ***/
 /******************/
 
-router.get('/tags', function(req, res) {
+router.get('/tags', urlencodedParser, function(req, res) {
     tags.orderByChild("name")
     .once('value')
     .then(function(tagSnapshot) {
@@ -102,20 +102,21 @@ router.get('/tags/:id', function(req, res) {
 router.post('/tags', urlencodedParser, function(req, res) {
   var tag = req.body;
   tags.push().set({
-    "description": tag.tagdescription,
-    "name": tag.tagname,
+    "description": tag.tagDescription,
+    "name": tag.tagName,
     "active": true
   });
-  res.json({ message: 'tag toegevoegt' });
+  res.redirect(req.get('referer'));
 });
 
 router.put('/tags/:id', function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
+  var tag = req.body;
   specificTag.set({
-    "description": tag.tagdescription,
-    "name": tag.tagname
+    "description": tag.tagDescription,
+    "name": tag.tagName
   });
-  res.json({ 'tags': tags, message: 'Todo Updated' });
+  res.redirect(req.get('referer'));
 });
 
 router.delete('/tags/:id', function(req, res) {
@@ -125,5 +126,4 @@ router.delete('/tags/:id', function(req, res) {
   })
   res.json({ message: 'tag Deleted' });
 });
-
 module.exports = router;
