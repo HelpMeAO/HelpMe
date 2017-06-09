@@ -121,9 +121,16 @@ router.put('/tags/:id', function(req, res) {
 
 router.delete('/tags/:id', function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
-  specificTag.set({
-    "active": false
-  })
+  specificTag.once("value")
+  .then(function(snapshot) {
+    var name = snapshot.val().name;
+    var description = snapshot.val().description;
+    specificTag.set({
+      "description": description,
+      "name": name,
+      "active": false
+    })
+  });
   res.json({ message: 'tag Deleted' });
 });
 module.exports = router;

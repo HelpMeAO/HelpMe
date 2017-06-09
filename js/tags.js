@@ -77,22 +77,40 @@
 
 		},
 		// Create a way to generate the html for the tags.
-		this.generateTagHTML =  function(selector, title, text, id) {
-    		var html = '<div data-id="'+id+'" class="card blue-grey darken-1">'
+		this.generateTagHTML =  function(selector, title, text, id, active) {
+			if (active == true){
+    			var html = '<div data-id="'+id+'" class="card blue-grey darken-1">'
 				html += 	'<div class="card-content white-text">'
 				html +=			'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'
 				html +=		'</div>'
 				html +=		'<div class="card-action">'
-				html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'
-				html +=			'<a href="javascript:void(0)" class="deleteTag">Verwijder</a>'
+    			html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'
+				html +=			'<a href="javascript:void(0)" class="deleteTag">Archieveer</a>'
 				html +=			'<div class="confirmDiv">'
-				html +=				'<span class="confirmDelete">Weet u zeker dat u deze tag wilt verwijderen?'
+				html +=				'<span class="confirmDelete">Weet u zeker dat u deze tag wilt archieveren?'
 				html +=					'<a class="deleteTagConfirm btn waves-effect waves-light">Ja</a>'
 				html +=					'<a class="deleteTagCancel btn waves-effect waves-light">Nee</a>'
 				html +=				'</span>'
 				html +=			'</div>'
 				html +=		'</div>'
 				html += '</div>'
+			}
+			else{
+				var html = '<div data-id="'+id+'" class="card blue-grey darken-4">'
+				html += 	'<div class="card-content white-text">'
+				html +=			'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'
+				html +=		'</div>'
+				html +=		'<div class="card-action">'
+    			html +=			'<a href="javascript:void(0)" class="activeTag">Activeer</a>'
+				html +=			'<div class="confirmDiv">'
+				html +=				'<span class="confirmActive">Weet u zeker dat u deze tag wilt activeren?'
+				html +=					'<a class="activeTagConfirm btn waves-effect waves-light">Ja</a>'
+				html +=					'<a class="activeTagCancel btn waves-effect waves-light">Nee</a>'
+				html +=				'</span>'
+				html +=			'</div>'
+				html +=		'</div>'
+				html += '</div>'
+			}
     		var col 		= document.createElement('div');
     		col.className = "col s12 m6";
      		col.innerHTML = html;
@@ -100,9 +118,14 @@
     		return col;
 		},
 		// Displays a single tag and adds it to the tagList object
-		this.displayTag =  function(id, title, text) {
+		this.displayTag =  function(id, title, text, active) {
 			// Generates the html and puts it in a reference.
-			var ref = this.generateTagHTML(".tagsList", title, text, id);
+			if (active == true){
+    			var ref = this.generateTagHTML(".tagsList", title, text, id, active);
+    		}
+    		else{
+    			var ref = this.generateTagHTML(".AtagsList", title, text, id, active);
+    		}
 		},
 		// tagActions
 		this.tagActions = function(action, callback) {
@@ -129,7 +152,10 @@
  					var id = key;
  					var name = tags[key].name;
  					var description = tags[key].description;
-    				this.displayTag(id, name, description);
+ 					var active = tags[key].active;
+ 					// if(active == true){
+    					this.displayTag(id, name, description, active);
+    				// }
  				}
 			}
 		},
@@ -160,14 +186,14 @@
 				$("html, body").animate({ scrollTop: pos }, 1400);
 			});
 			// Get a reference to the tagslist.
-			var list = $('.tagsList');
+			var list = $('.tagsList, .AtagsList');
 			// Add a event listener for clicks.
 			list.on('click', function(event) {
 				var target = $( event.target );
 				// Check if the click is on a anchor.
 				if(target.is('A')) {
-					var id = target.parent().parent().parent().data("id");
-					Check if the click is on the edit.
+					var id = target.parent().parent().data("id");
+					// Check if the click is on the edit.
 					if(target.is('.changeTag')) {
 						TagsUI.tagActions({
 							"method":"GET",
@@ -178,13 +204,13 @@
 							TagsUI.displayForm(tag);
 						});
 					}
-					if(target.is('.deleteTag')){
+					if(target.is('.deleteTag, .activeTag')){
 						$('.confirmDiv').removeClass('active');
 						$(target).siblings('.confirmDiv').addClass('active');
 					}
 					if(target.is('.deleteTagConfirm')){
 						card = $(target).parent().parent().parent().parent();
-						TagsUI.tagActions({'method':'DELETE', 'id' : card.data('id')});
+						TagsUI.tagActions({'method':'DELETE', 'id':card.data('id')});
 						card.parent().css("opacity", "0");
 						console.log(card.data('id'));
   						setTimeout(function(){ card.parent().remove(); }, 400);
