@@ -10,17 +10,16 @@
 		this.generateFormHTML =  function(id, name, description) {
 			name = name || "";
 			description = description || "";
-
-			if(typeof id !== 'undefined') {
-				var formAction = "/api/tags/" + id;
-				var formMethod = "put";
-				var headerText = document.createTextNode("Bewerk een tag.");
-				var captionText = document.createTextNode("Bewerk een tag, Verander de tagname en de beschrijving.");
-			} else {
+			if(typeof id === "undefined") {
 				var formAction = "/api/tags";
 				var formMethod = "post";
 				var headerText = document.createTextNode("Voeg een tag toe.");
-				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
+				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");	
+			} else {
+				var formAction = "/api/tags/" + id;
+				var formMethod = "post";
+				var headerText = document.createTextNode("Bewerk een tag.");
+				var captionText = document.createTextNode("Bewerk een tag, Verander de tagname en de beschrijving.");
 			}
 
     		var editor = document.createElement('div');
@@ -153,15 +152,14 @@
  					var name = tags[key].name;
  					var description = tags[key].description;
  					var active = tags[key].active;
- 					// if(active == true){
-    					this.displayTag(id, name, description, active);
-    				// }
+    				
+    				this.displayTag(id, name, description, active);
  				}
 			}
 		},
-		this.displayForm =  function(tag) {
+		this.displayForm =  function(id, tag) {
 			if(typeof tag !== 'undefined'){
-				var editor = this.generateFormHTML(tag.id, tag.name, tag.description);
+				var editor = this.generateFormHTML(id, tag.name, tag.description);
 			} else {
 				var editor = this.generateFormHTML();
 			}
@@ -201,33 +199,30 @@
 						},
 						function() {
 							var tag = JSON.parse(this.response);
-							TagsUI.displayForm(tag);
+							TagsUI.displayForm(id, tag);
 						});
+						el = $('.editor');
+						var pos = el.offset().top - 170;
+						$("html, body").animate({ scrollTop: pos }, 1400);
 					}
 					if(target.is('.deleteTag, .activeTag')){
 						$('.confirmDiv').removeClass('active');
 						$(target).siblings('.confirmDiv').addClass('active');
 					}
-					if(target.is('.deleteTagConfirm')){
+					if(target.is('.deleteTagConfirm, .activeTagConfirm')){
 						card = $(target).parent().parent().parent().parent();
 						TagsUI.tagActions({'method':'DELETE', 'id':card.data('id')});
 						card.parent().css("opacity", "0");
-						console.log(card.data('id'));
   						setTimeout(function(){ card.parent().remove(); }, 400);
 					}
-					if(target.is('.deleteTagCancel')){
+					if(target.is('.deleteTagCancel, .activeTagCancel')){
 						$(target).parent().parent().removeClass('active');
 					}
 				}
 			});
 			var editor = $('.editor');
 			editor.on('click', function(event) {
-				var target = $(event.target);
-				if(target.is('BUTTON')) {
-					event.preventDefault();
-					var tagName = editor.find('input[name="tagName"]').val();
-					var tagDescription = editor.find('input[name="tagDescription"]').val();
-				}
+			
 			});
 		}
 		// Create a way to remove a tag from the html.

@@ -109,12 +109,12 @@ router.post('/tags', urlencodedParser, function(req, res) {
   res.redirect(req.get('referer'));
 });
 
-router.put('/tags/:id', function(req, res) {
+router.post('/tags/:id', urlencodedParser, function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
   var tag = req.body;
-  specificTag.set({
+  specificTag.update({
     "description": tag.tagDescription,
-    "name": tag.tagName
+    "name": tag.tagName 
   });
   res.redirect(req.get('referer'));
 });
@@ -125,12 +125,23 @@ router.delete('/tags/:id', function(req, res) {
   .then(function(snapshot) {
     var name = snapshot.val().name;
     var description = snapshot.val().description;
-    specificTag.set({
-      "description": description,
-      "name": name,
-      "active": false
-    })
+    var active = snapshot.val().active;
+    if(active == true){
+      specificTag.set({
+        "description": description,
+        "name": name,
+        "active": false
+      });
+    }
+    else{
+      specificTag.set({
+        "description": description,
+        "name": name,
+        "active": true
+      });
+    }
   });
   res.json({ message: 'tag Deleted' });
 });
+
 module.exports = router;
