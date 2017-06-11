@@ -7,7 +7,7 @@
 
 	function TagsUI () {
 		// Create a way to generate the html for the form.
-		this.generateFormHTML =  function(id, name, description) {
+		this.generateFormHTML =  function(id, name, description, checked) {
 			name = name || "";
 			description = description || "";
 			if(typeof id === "undefined") {
@@ -50,12 +50,24 @@
 							tagDescription.name = "tagDescription";
 							tagDescription.placeholder = "Vul hier de beschrijving in van de tag";
 							tagDescription.value = description;
+							var testCheckboxP = document.createElement('p');
+								var tagTest = document.createElement('input');
+								tagTest.type = "checkbox";
+								tagTest.id = "testCheckbox";
+								tagTest.name = "tagTest";
+								if(checked){
+									tagTest.checked = true;
+								}
+								var tagTestLabel = document.createElement('label');
+								tagTestLabel.htmlFor = "testCheckbox";
+							tagTestLabel.appendChild(document.createTextNode('Test tag'));
+							var submitP = document.createElement('p');
 							var submit = document.createElement('button');
-							submit.className = "btn waves-effect waves-light";
-							submit.type = "submit";
-							submit.name = "action";
-								var submitText = document.createTextNode("Submit");
-							submit.appendChild(submitText);
+								submit.className = "btn waves-effect waves-light";
+								submit.type = "submit";
+								submit.name = "action";
+									var submitText = document.createTextNode("Submit");
+								submit.appendChild(submitText);
 								var icon = document.createElement("i");
 								icon.className = "material-icons right";
 									var iconText = document.createTextNode("send");
@@ -63,7 +75,11 @@
 							submit.appendChild(icon);
 						inputField.appendChild(tagName);
 						inputField.appendChild(tagDescription);
-						inputField.appendChild(submit);
+						inputField.appendChild(testCheckboxP);
+							testCheckboxP.appendChild(tagTest);
+							testCheckboxP.appendChild(tagTestLabel);
+						inputField.appendChild(submitP);
+							submitP.appendChild(submit);
 					row.appendChild(inputField);
 				form.appendChild(row);
 			editor.appendChild(header);
@@ -76,40 +92,47 @@
 
 		},
 		// Create a way to generate the html for the tags.
-		this.generateTagHTML =  function(selector, title, text, id, active) {
+		this.generateTagHTML =  function(selector, title, text, id, active, test) {
 			if (active == true){
-    			var html = '<div data-id="'+id+'" class="card blue-grey darken-1">'
-				html += 	'<div class="card-content white-text">'
-				html +=			'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'
-				html +=		'</div>'
-				html +=		'<div class="card-action">'
-    			html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'
-				html +=			'<a href="javascript:void(0)" class="deleteTag">Archieveer</a>'
-				html +=			'<div class="confirmDiv">'
-				html +=				'<span class="confirmDelete">Weet u zeker dat u deze tag wilt archieveren?'
-				html +=					'<a class="deleteTagConfirm btn waves-effect waves-light">Ja</a>'
-				html +=					'<a class="deleteTagCancel btn waves-effect waves-light">Nee</a>'
-				html +=				'</span>'
-				html +=			'</div>'
-				html +=		'</div>'
-				html += '</div>'
+    			var html = '<div data-id="'+id+'" class="card blue-grey darken-1">';
+    		}
+    		else{
+    			var html = '<div data-id="'+id+'" class="card blue-grey darken-4">';
+    		}
+				html +=		'<div class="card-content white-text">'+
+								'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'+
+							'</div>'+
+							'<div class="card-action">';
+			if(active == true){
+	    		html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'+
+								'<a href="javascript:void(0)" class="archieveTag">Archieveer</a>'+
+								'<div class="confirmArchieveDiv">'+
+									'<span class="confirmArchieve">Weet u zeker dat u deze tag wilt archieveren?'+
+										'<a class="archieveTagConfirm btn waves-effect waves-light">Ja</a>'+
+										'<a class="archieveTagCancel btn waves-effect waves-light">Nee</a>'+
+									'</span>'+
+								'</div>';
 			}
 			else{
-				var html = '<div data-id="'+id+'" class="card blue-grey darken-4">'
-				html += 	'<div class="card-content white-text">'
-				html +=			'<span class="casrd-title">'+title+'</span><p>'+text+'</p>'
-				html +=		'</div>'
-				html +=		'<div class="card-action">'
-    			html +=			'<a href="javascript:void(0)" class="activeTag">Activeer</a>'
-				html +=			'<div class="confirmDiv">'
-				html +=				'<span class="confirmActive">Weet u zeker dat u deze tag wilt activeren?'
-				html +=					'<a class="activeTagConfirm btn waves-effect waves-light">Ja</a>'
-				html +=					'<a class="activeTagCancel btn waves-effect waves-light">Nee</a>'
-				html +=				'</span>'
-				html +=			'</div>'
-				html +=		'</div>'
-				html += '</div>'
+				html +=			'<a href="javascript:void(0)" class="activeTag">Activeer</a>'+
+    							'<div class="confirmActiveDiv">'+
+									'<span class="confirmActive">Weet u zeker dat u deze tag wilt activeren?'+
+										'<a class="activeTagConfirm btn waves-effect waves-light">Ja</a>'+
+										'<a class="activeTagCancel btn waves-effect waves-light">Nee</a>'+
+									'</span>'+
+								'</div>';
 			}
+				if(test){
+					html +=		'<a href="javascript:void(0)" class="deleteTag">Verwijder</a>'+
+								'<div class="confirmDeleteDiv">'+
+									'<span class="confirmDelete">Weet u zeker dat u deze tag wilt verwijderen?'+
+										'<a class="deleteTagConfirm btn waves-effect waves-light">Ja</a>'+
+										'<a class="deleteTagCancel btn waves-effect waves-light">Nee</a>'+
+									'</span>'+
+								'</div>';
+				}
+				html +=		'</div>'+
+						'</div>';
     		var col 		= document.createElement('div');
     		col.className = "col s12 m6";
      		col.innerHTML = html;
@@ -117,19 +140,18 @@
     		return col;
 		},
 		// Displays a single tag and adds it to the tagList object
-		this.displayTag =  function(id, title, text, active) {
+		this.displayTag =  function(id, title, text, active, test) {
 			// Generates the html and puts it in a reference.
 			if (active == true){
-    			var ref = this.generateTagHTML(".tagsList", title, text, id, active);
+    			var ref = this.generateTagHTML(".tagsList", title, text, id, active, test);
     		}
     		else{
-    			var ref = this.generateTagHTML(".AtagsList", title, text, id, active);
+    			var ref = this.generateTagHTML(".AtagsList", title, text, id, active, test);
     		}
 		},
 		// tagActions
 		this.tagActions = function(action, callback) {
 			var apiURL = "/api/tags/";
-
 			if(typeof action.id !== 'undefined') {
 				apiURL = apiURL + action.id;
 			}
@@ -142,6 +164,7 @@
 	  				}
 			    }
 			};
+			
 			xhr.open(action.method, apiURL, true);
   			xhr.send(action.data);
 		},
@@ -152,14 +175,15 @@
  					var name = tags[key].name;
  					var description = tags[key].description;
  					var active = tags[key].active;
+ 					var test = tags[key].test;
     				
-    				this.displayTag(id, name, description, active);
+    				this.displayTag(id, name, description, active, test);
  				}
 			}
 		},
 		this.displayForm =  function(id, tag) {
 			if(typeof tag !== 'undefined'){
-				var editor = this.generateFormHTML(id, tag.name, tag.description);
+				var editor = this.generateFormHTML(id, tag.name, tag.description , tag.test);
 			} else {
 				var editor = this.generateFormHTML();
 			}
@@ -205,17 +229,31 @@
 						var pos = el.offset().top - 170;
 						$("html, body").animate({ scrollTop: pos }, 1400);
 					}
-					if(target.is('.deleteTag, .activeTag')){
+					if(target.is('.archieveTag')){
 						$('.confirmDiv').removeClass('active');
-						$(target).siblings('.confirmDiv').addClass('active');
+						$(target).siblings('.confirmArchieveDiv').addClass('active');
 					}
-					if(target.is('.deleteTagConfirm, .activeTagConfirm')){
+					if(target.is('.activeTag')){
+						$('.confirmDiv').removeClass('active');
+						$(target).siblings('.confirmActiveDiv').addClass('active');
+					}
+					if(target.is('.deleteTag')){
+						$('.confirmDiv').removeClass('active');
+						$(target).siblings('.confirmDeleteDiv').addClass('active');
+					}
+					if(target.is('.archieveTagConfirm, .activeTagConfirm')){
+						card = $(target).parent().parent().parent().parent();
+						TagsUI.tagActions({'method':'MOVE', 'id':card.data('id')});
+						card.parent().css("opacity", "0");
+  						setTimeout(function(){ card.parent().remove(); }, 400);
+					}
+					if(target.is('.deleteTagConfirm')){
 						card = $(target).parent().parent().parent().parent();
 						TagsUI.tagActions({'method':'DELETE', 'id':card.data('id')});
 						card.parent().css("opacity", "0");
   						setTimeout(function(){ card.parent().remove(); }, 400);
 					}
-					if(target.is('.deleteTagCancel, .activeTagCancel')){
+					if(target.is('.archieveTagCancel, .activeTagCancel, .deleteTagCancel')){
 						$(target).parent().parent().removeClass('active');
 					}
 				}

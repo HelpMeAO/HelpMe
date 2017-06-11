@@ -145,7 +145,7 @@ h5 {
 .cardRemove{
     position: relative;
 }
-.confirmDiv{
+.confirmActiveDiv, .confirmArchieveDiv, .confirmDeleteDiv{
     transition: .4s all;
     opacity: 0;
     width: 0;
@@ -162,18 +162,18 @@ h5 {
     z-index: 10;
     line-height: 30px;
 }
-.confirmDiv.active{
+.confirmActiveDiv.active, .confirmArchieveDiv.active, .confirmDeleteDiv.active{
     height: 75px;
     width: 230px;
     opacity: 1;
 }
-.confirmDelete, .confirmActive{
+.confirmArchieve, .confirmActive, .confirmDelete{
     position: absolute;
     width: 211px;
     height: 63px;
     margin: 5px 9px;
 }
-.confirmDelete a, .confirmActive a{
+.confirmArchieve a, .confirmActive a, .confirmDelete a{
     transition: .5s all;
     margin: -6px 0 0 5px;
     padding: 0;

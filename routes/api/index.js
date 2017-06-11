@@ -101,47 +101,99 @@ router.get('/tags/:id', function(req, res) {
 
 router.post('/tags', urlencodedParser, function(req, res) {
   var tag = req.body;
-  tags.push().set({
-    "description": tag.tagDescription,
-    "name": tag.tagName,
-    "active": true
-  });
+  if(tag.tagTest){
+    tags.push().set({
+      "description": tag.tagDescription,
+      "name": tag.tagName,
+      "active": true,
+      "test": tag.tagTest
+    });
+  }
+  else{
+    tags.push().set({
+      "description": tag.tagDescription,
+      "name": tag.tagName,
+      "active": true,
+    });
+  }
   res.redirect(req.get('referer'));
 });
 
 router.post('/tags/:id', urlencodedParser, function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
   var tag = req.body;
-  specificTag.update({
-    "description": tag.tagDescription,
-    "name": tag.tagName 
+  specificTag.once("value")
+  .then(function(snapshot) {
+    var active = snapshot.val().active;
+    if(active == true){
+      if(tag.tagTest){
+        specificTag.update({
+          "description": tag.tagDescription,
+          "name": tag.tagName,
+          "test": tag.tagTest 
+        });
+      }
+      else{
+        specificTag.update({
+          "description": tag.tagDescription,
+          "name": tag.tagName
+        });
+        specificTag.child("test").remove();
+      }
+    }
   });
   res.redirect(req.get('referer'));
 });
 
-router.delete('/tags/:id', function(req, res) {
+router.move('/tags/:id', function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
   specificTag.once("value")
   .then(function(snapshot) {
     var name = snapshot.val().name;
     var description = snapshot.val().description;
     var active = snapshot.val().active;
+    var test = snapshot.val().test;
     if(active == true){
-      specificTag.set({
-        "description": description,
-        "name": name,
-        "active": false
-      });
+      if(test){
+        specificTag.update({
+          "description": description,
+          "name": name,
+          "active": false,
+          "test" : test
+        });
+      }
+      else{
+        specificTag.update({
+          "description": description,
+          "name": name,
+          "active": false,
+        });
+      }
     }
     else{
-      specificTag.set({
-        "description": description,
-        "name": name,
-        "active": true
-      });
+      if(test){
+        specificTag.update({
+          "description": description,
+          "name": name,
+          "active": true,
+          "test" : test
+        });
+      }
+      else{
+        specificTag.update({
+          "description": description,
+          "name": name,
+          "active": true,
+        });
+      }
     }
   });
-  res.json({ message: 'tag Deleted' });
+  res.json({ message: 'tag Archieved' });
+});
+router.delete('/tags/:id', function(req, res) {
+  var specificTag = firebase.database().ref("tags/" + req.params.id);
+  specificTag.remove();
+ res.json({ message: 'tag Archieved' });
 });
 
 module.exports = router;
