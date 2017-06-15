@@ -12,14 +12,23 @@
   </head>
   <body>
     <nav>
-      <div class="nav-wrapper">
-        <a href="/" class="brand-logo"><img src="img/images.png"></a>
-        <ul class="right hide-on-med-and-down">
-          <li><a href="/"><i class="material-icons">list</i></a></li>
-          <li><a href="/create"><i class="material-icons">add</i></a></li>
-        </ul>
-      </div>
-    </nav>
+        <div class="nav-wrapper">
+          <a href="#!" class="brand-logo"><img src="img/images.png"></a>
+          <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+          <ul class="right hide-on-med-and-down">
+            <li><a href="/"><i class="material-icons">list</i></a></li>
+            <li><a href="/create"><i class="material-icons">add</i></a></li>
+            <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
+          </ul>
+          <ul class="side-nav" id="mobile-demo">
+             <li><a href="/"><i class="material-icons">list</i></a></li>
+            <li><a href="/create"><i class="material-icons">add</i></a></li>
+            <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
+          </ul>
+        </div>
+  </nav>
     <div class="container">
       <h4 class="header">Stel een vraag</h4>
       <p class="caption">Loop je vast, of heb je gewoon een vraag?<br>Stel een vraag en dan komt er z.s.m. een leeraar langs!</p>
