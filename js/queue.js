@@ -1,6 +1,9 @@
 $(document).ready(function() {
+  // Create a new Queue
   var queue = new queue();
+  // Get the tickets
   queue.getTickets();
+
   function queue () {
     this.getTickets = function() {
       // Start a XHR request to the API
@@ -25,6 +28,7 @@ $(document).ready(function() {
         tdName.className = "name";
         tdName.innerHTML = obj.student;
         tr.appendChild(tdName);
+
         // Create Tag td
         var tdTag = document.createElement("td");
         if(typeof(obj.tags) == "object") {

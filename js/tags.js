@@ -14,7 +14,7 @@
 				var formAction = "/api/tags";
 				var formMethod = "post";
 				var headerText = document.createTextNode("Voeg een tag toe.");
-				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");	
+				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
 			} else {
 				var formAction = "/api/tags/" + id;
 				var formMethod = "post";
@@ -85,7 +85,7 @@
 			editor.appendChild(header);
 			editor.appendChild(caption);
 			editor.appendChild(form);
-			
+
 
 			return editor;
 
@@ -155,7 +155,7 @@
 			if(typeof action.id !== 'undefined') {
 				apiURL = apiURL + action.id;
 			}
-			
+
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
 	  			if (this.readyState == 4 && this.status == 200) {
@@ -164,7 +164,7 @@
 	  				}
 			    }
 			};
-			
+
 			xhr.open(action.method, apiURL, true);
   			xhr.send(action.data);
 		},
@@ -176,7 +176,7 @@
  					var description = tags[key].description;
  					var active = tags[key].active;
  					var test = tags[key].test;
-    				
+
     				this.displayTag(id, name, description, active, test);
  				}
 			}
@@ -187,13 +187,13 @@
 			} else {
 				var editor = this.generateFormHTML();
 			}
-			
+
 			var container = document.querySelector(".editor");
 			container.removeChild(container.firstChild);
 			container.appendChild(editor);
 		},
 		this.loadTags =  function() {
-			this.tagActions({"method": "GET" }, 
+			this.tagActions({"method": "GET" },
 				function() {
 				var tags = JSON.parse(this.response);
 				TagsUI.displayTags(tags);
@@ -260,7 +260,7 @@
 			});
 			var editor = $('.editor');
 			editor.on('click', function(event) {
-			
+
 			});
 		}
 		// Create a way to remove a tag from the html.
