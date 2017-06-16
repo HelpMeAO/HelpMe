@@ -17,13 +17,10 @@
 				// If the id is undefined then it is a create.
 				var formAction = "/api/tags";
 				var formMethod = "post";
-<<<<<<< HEAD
 				var headerText = document.createTextNode("Voeg een tag toe.");
 				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
-=======
 				var headerText = "Voeg een tag toe.";
-				var captionText = "Voeg een tag toe, Vul de tagname en de beschrijving in.";	
->>>>>>> b275d39a22c5d80a57fd887920856c11792a7d8f
+				var captionText = "Voeg een tag toe, Vul de tagname en de beschrijving in.";
 			} else {
 				// Else if the id is defined then it is a edit.
 				var formAction = "/api/tags/" + id;
@@ -49,7 +46,6 @@
     			"method": formMethod
     		}).appendTo(editor);
 
-<<<<<<< HEAD
 	    		var form = document.createElement('form');
 	    		form.className = "col s12";
 	    		form.action = formAction;
@@ -104,11 +100,9 @@
 			editor.appendChild(caption);
 			editor.appendChild(form);
 
-=======
     		var row = $('<div/>',{
     			"class": "row"
     		}).appendTo(form);
->>>>>>> b275d39a22c5d80a57fd887920856c11792a7d8f
 
     		var inputField = $('<div/>',{
     			"class": "input-field col s12"
@@ -241,11 +235,8 @@
 	  				}
 			    }
 			};
-<<<<<<< HEAD
 
-=======
 			// Opens the xhr request and put the method, url and make it asynchronous.
->>>>>>> b275d39a22c5d80a57fd887920856c11792a7d8f
 			xhr.open(action.method, apiURL, true);
 			// Sends the request with potential data.
   			xhr.send(action.data);

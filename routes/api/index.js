@@ -64,7 +64,7 @@ router.post('/tickets', urlencodedParser, function(req, res) {
 router.put('/tickets/:id', function(req, res) {
   var specificTicket = firebase.database().ref("tickets/" + req.params.id);
   var oldTime = req.body.timeAdded;
-  specificTicket.set({
+  specificTicket.update({
     "description": req.body.description,
     "tags": req.body.tags,
     "student": "99033279",
@@ -119,7 +119,7 @@ router.post('/tags', urlencodedParser, function(req, res) {
   res.redirect(req.get('referer'));
 });
 
-router.post('/tags/:id', urlencodedParser, function(req, res) {
+router.put('/tags/:id', urlencodedParser, function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
   var tag = req.body;
   specificTag.once("value")
@@ -130,7 +130,7 @@ router.post('/tags/:id', urlencodedParser, function(req, res) {
         specificTag.update({
           "description": tag.tagDescription,
           "name": tag.tagName,
-          "test": tag.tagTest 
+          "test": tag.tagTest
         });
       }
       else{

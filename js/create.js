@@ -16,7 +16,6 @@ $(document).ready(function() {
 
 		this.createSelect = function(data) {
       // Create a dropdown
-
 			var dropDown = $("<select>",{
 				multiple: "multiple",
 				required: "required",
@@ -25,7 +24,6 @@ $(document).ready(function() {
 			});
 
       // Create a disabled option for explanation
-
 			var disabledOption = $("<option/>", {
 				value: "0",
 				disabled: "disabled",
@@ -44,9 +42,10 @@ $(document).ready(function() {
 					}).text(obj.name).appendTo(dropDown);
 				}
 			}
+
       // Append the dropdown to the page
       $(dropDown).appendTo("div.questions");
-      
+
       // Force Materialize to re-initialize the select
     	$('select').material_select();
 		}
