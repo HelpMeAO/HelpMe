@@ -17,8 +17,6 @@
 				// If the id is undefined then it is a create.
 				var formAction = "/api/tags";
 				var formMethod = "post";
-				var headerText = document.createTextNode("Voeg een tag toe.");
-				var captionText = document.createTextNode("Voeg een tag toe, Vul de tagname en de beschrijving in.");
 				var headerText = "Voeg een tag toe.";
 				var captionText = "Voeg een tag toe, Vul de tagname en de beschrijving in.";
 			} else {
@@ -210,7 +208,6 @@
 			var container = document.querySelector(".editor");
 			container.removeChild(container.firstChild);
 			editor.appendTo(container);
-			console.log(editor);
 		},
 		this.loadTags =  function() {
 			this.tagActions({"method": "GET" },
@@ -243,7 +240,7 @@
 						},
 						function() {
 							var tag = JSON.parse(this.response);
-							TagsUI.displayForm(id, tag);
+							TagsUI.displayForm(tag.key, tag.data);
 						});
 						el = $('.editor');
 						var pos = el.offset().top - 170;
