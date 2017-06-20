@@ -114,7 +114,7 @@ td.description {
 
 @media only screen and (min-width: 992px) {
   tr > th {
-    float: none;
+    float: none !important;
   }
 }
 
