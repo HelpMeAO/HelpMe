@@ -46,60 +46,6 @@
     			"method": formMethod
     		}).appendTo(editor);
 
-	    		var form = document.createElement('form');
-	    		form.className = "col s12";
-	    		form.action = formAction;
-	    		form.method = formMethod;
-					var row = document.createElement('div');
-					row.className = "row";
-						var inputField = document.createElement('div');
-						inputField.className = "input-field col s12";
-							var tagName = document.createElement('input');
-							tagName.type = "text";
-							tagName.name = "tagName";
-							tagName.placeholder = "Voer hier de naam in van de Tag";
-							tagName.value = name;
-							var tagDescription = document.createElement('input');
-							tagDescription.type = "text";
-							tagDescription.name = "tagDescription";
-							tagDescription.placeholder = "Vul hier de beschrijving in van de tag";
-							tagDescription.value = description;
-							var testCheckboxP = document.createElement('p');
-								var tagTest = document.createElement('input');
-								tagTest.type = "checkbox";
-								tagTest.id = "testCheckbox";
-								tagTest.name = "tagTest";
-								if(checked){
-									tagTest.checked = true;
-								}
-								var tagTestLabel = document.createElement('label');
-								tagTestLabel.htmlFor = "testCheckbox";
-							tagTestLabel.appendChild(document.createTextNode('Test tag'));
-							var submitP = document.createElement('p');
-							var submit = document.createElement('button');
-								submit.className = "btn waves-effect waves-light";
-								submit.type = "submit";
-								submit.name = "action";
-									var submitText = document.createTextNode("Submit");
-								submit.appendChild(submitText);
-								var icon = document.createElement("i");
-								icon.className = "material-icons right";
-									var iconText = document.createTextNode("send");
-								icon.appendChild(iconText);
-							submit.appendChild(icon);
-						inputField.appendChild(tagName);
-						inputField.appendChild(tagDescription);
-						inputField.appendChild(testCheckboxP);
-							testCheckboxP.appendChild(tagTest);
-							testCheckboxP.appendChild(tagTestLabel);
-						inputField.appendChild(submitP);
-							submitP.appendChild(submit);
-					row.appendChild(inputField);
-				form.appendChild(row);
-			editor.appendChild(header);
-			editor.appendChild(caption);
-			editor.appendChild(form);
-
     		var row = $('<div/>',{
     			"class": "row"
     		}).appendTo(form);
