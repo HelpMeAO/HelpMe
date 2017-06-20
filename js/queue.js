@@ -31,14 +31,19 @@ $(document).ready(function() {
 
         // Create Tag td
         var tdTag = document.createElement("td");
+        var tagChip = []
         if(typeof(obj.tags) == "object") {
           for(var i = 0; i < obj.tags.length; i ++) {
-            var tagChip = document.createElement("div");
-            tagChip.className = "chip";
-            // Get the tag value from the array
-            tagChip.innerHTML = obj.tags[i];
-            // Add the just generated chip to tdTag
-            tdTag.appendChild(tagChip);
+            tagChip[i] = document.createElement("div");
+            tagChip[i].className = "chip";
+            tdTag.appendChild(tagChip[i]);
+            $(tagChip[i]).attr("data-id", obj.tags[i]);
+            $.ajax({
+              url: "api/tags/" + obj.tags[i],
+              method: "GET"
+            }).done(function(data) {
+              $('[data-id="' + data.key + '"]').text(data.data.name);
+            });
           }
         } else {
           var tagChip = document.createElement("div");
@@ -50,6 +55,14 @@ $(document).ready(function() {
         }
         tr.appendChild(tdTag);
 
+        var tdDescription = document.createElement("td");
+        tdDescription.className = "description";
+          if (obj.description != "" && obj.description != null) {
+            // Get the description value from the array
+            tdDescription.innerHTML = obj.description;
+          }
+        tr.appendChild(tdDescription);
+
         // Create Teacher td
         var tdTeacher = document.createElement("td");
           if ( obj.teacher != "") {
@@ -60,6 +73,7 @@ $(document).ready(function() {
             tdTeacher.appendChild(teacherChip);
           }
         tr.appendChild(tdTeacher);
+
         // Create Status td
         var tdStatus = document.createElement("td");
         tdStatus.class = "status";

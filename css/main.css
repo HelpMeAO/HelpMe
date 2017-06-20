@@ -17,7 +17,7 @@
     color:#FCFCFC;
 }
 .ccwhite{
-    color:#F0F2EF; 
+    color:#F0F2EF;
 }
 
 .ccblue-bg{
@@ -35,7 +35,7 @@
     background-color:#FCFCFC;
 }
 .ccwhite-bg{
-    background-color:#F0F2EF; 
+    background-color:#F0F2EF;
 }
 
 /****************/
@@ -103,7 +103,19 @@ div.questions {
     border-bottom: 1px solid #F0F2EF;
     color: #FCFCFC;
     text-align: center;
+}
 
+td.description {
+  max-width: 100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@media only screen and (min-width: 992px) {
+  tr > th {
+    float: none;
+  }
 }
 
 /*****************************/
@@ -127,7 +139,7 @@ a.password-link {
 }
 
 .sign-up{
-    
+
 }
 /****************/
 /* Tags styling */

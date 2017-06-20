@@ -95,7 +95,11 @@ router.get('/tags/:id', function(req, res) {
     var specificTag = firebase.database().ref("tags/" + req.params.id);
     specificTag.once("value")
     .then(function(snapshot) {
-      res.json(snapshot.val());
+      var response = {
+        key: snapshot.key,
+        data: snapshot.val()
+      }
+      res.json(response);
     });
 });
 
