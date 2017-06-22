@@ -1,8 +1,12 @@
 $(document).ready(function() {
 
+	var last_valid_selection = null;
 	var dynamicTags = new dynamicTags();
 	dynamicTags.getTags();
 
+	/**********************/
+	/*** GET TAGS LOGIC ***/
+	/**********************/
 	function dynamicTags() {
 		this.getTags = function() {
       // Get the tags from the API
@@ -48,6 +52,17 @@ $(document).ready(function() {
 
       // Force Materialize to re-initialize the select
     	$('select').material_select();
+
+
+			$('select').change(function(event) {
+				if ($(this).val().length > 2) {
+					alert('Je kan maar 2 tags selecteren');
+					debugger;
+					$(this).val(last_valid_selection);
+				} else {
+					last_valid_selection = $(this).val();
+				}
+			});
 		}
 	}
 });
