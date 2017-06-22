@@ -58,6 +58,8 @@ router.post('/tickets', urlencodedParser, function(req, res) {
     "student": "99033279",
     "teacher": "",
     "timeAdded": currentTime
+  }).then(function() {
+    res.redirect('../');
   });
 });
 
