@@ -22,6 +22,7 @@ $(document).ready(function() {
         // Create table row for ticket
         var tr = document.createElement("tr");
         tr.className = key;
+        console.log(data);
 
         // Create Name td
         var tdName = document.createElement("td");
@@ -75,20 +76,22 @@ $(document).ready(function() {
         tr.appendChild(tdTeacher);
 
         // Create Status td
-        var tdStatus = document.createElement("td");
-        tdStatus.class = "status";
-          // Create status icon
-          var iStatus = document.createElement("i");
-          iStatus.className = "material-icons";
-          iStatus.innerHTML = "hourglass_empty";
-          tdStatus.appendChild(iStatus);
-        // Append status to TableRow
-        tr.appendChild(tdStatus);
+        if(!obj.status || obj.status == false){
+          var tdStatus = document.createElement("td");
+          tdStatus.class = "status";
+            // Create status icon
+            var iStatus = document.createElement("i");
+            iStatus.className = "material-icons";
+            iStatus.innerHTML = "hourglass_empty";
+            tdStatus.appendChild(iStatus);
+          // Append status to TableRow
+          tr.appendChild(tdStatus);
 
-        // Finally append everything to the table
-        $(".tbody-wrapper").append(tr);
-        $(tr).hide();
-        $(tr).fadeIn("slow");
+          // Finally append everything to the table
+          $(".tbody-wrapper").append(tr);
+          $(tr).hide();
+          $(tr).fadeIn("slow");
+        }
       }
     }
 

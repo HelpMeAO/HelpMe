@@ -22,8 +22,12 @@ firebase.initializeApp({
 
 // Create reference(s) to the database
 var database = firebase.database();
-var tickets = firebase.database().ref("tickets");
-var tags = firebase.database().ref("tags");
+var tickets = database.ref("tickets");
+var tags = database.ref("tags");
+var users = database.ref("users");
+
+// Authentication 
+var auth = firebase.auth()
 
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -57,6 +61,7 @@ router.post('/tickets', urlencodedParser, function(req, res) {
     "tags": req.body.tags,
     "student": "99033279",
     "teacher": "",
+    "Status": false,
     "timeAdded": currentTime
   }).then(function() {
     res.redirect('../');
@@ -71,6 +76,7 @@ router.put('/tickets/:id', function(req, res) {
     "tags": req.body.tags,
     "student": "99033279",
     "teacher": "",
+    "status": true,
     "timeAdded": oldTime
   });
   res.json({ 'Ticket': req.params.id, message: 'Todo Updated' });
@@ -202,4 +208,26 @@ router.delete('/tags/:id', function(req, res) {
  res.json({ message: 'tag Archieved' });
 });
 
+/*  login   */
+router.post('/users', urlencodedParser, function(req, res) {
+  var user = req.body;
+  console.log(user);
+  if(Object.keys(user).length == 3){
+    // if(user.email.length > 10){
+    //   var nr = user.email.split("@");
+    //   firebase.database().ref("users/"+nr[0]).remove();
+    // }
+  }
+  if(Object.keys(user).length == 4){
+    var email = user.email;
+    var password = user.password;
+    var nr = email.split("@");
+    users.child(nr[0]).set({
+      "name": user.user[0],
+      "surname": user.user[1],
+      "verified": false
+    });
+  }
+  res.redirect('/');
+});
 module.exports = router;
