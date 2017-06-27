@@ -131,7 +131,7 @@ router.post('/tags', urlencodedParser, function(req, res) {
   res.redirect(req.get('referer'));
 });
 
-router.put('/tags/:id', urlencodedParser, function(req, res) {
+router.post('/tags/:id', urlencodedParser, function(req, res) {
   var specificTag = firebase.database().ref("tags/" + req.params.id);
   var tag = req.body;
   specificTag.once("value")
