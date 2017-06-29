@@ -141,6 +141,16 @@ a.password-link {
 .sign-up{
 
 }
+
+#error_bar{
+    border:1px solid red;
+    color: red;   
+}
+
+#error_bar_s{
+    border:1px solid red;
+    color: red;   
+}
 /****************/
 /* Tags styling */
 /****************/
