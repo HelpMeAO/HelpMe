@@ -134,7 +134,7 @@ router.post('/tags', urlencodedParser, function(req, res) {
       "active": true,
     });
   }
-  res.redirect(req.get('referer'));
+  res.redirect('/');
 });
 
 router.post('/tags/:id', urlencodedParser, function(req, res) {
