@@ -26,7 +26,7 @@ var tickets = database.ref("tickets");
 var tags = database.ref("tags");
 var users = database.ref("users");
 
-// Authentication 
+// Authentication
 var auth = firebase.auth()
 
 var router = express.Router();
@@ -56,16 +56,22 @@ router.get('/tickets/:id', function(req, res) {
 router.post('/tickets', urlencodedParser, function(req, res) {
   var ticket = req.body;
   var currentTime = Date.now();
-  tickets.push().set({
-    "description": req.body.description,
-    "tags": req.body.tags,
-    "student": "99033279",
-    "teacher": "",
-    "Status": false,
-    "timeAdded": currentTime
-  }).then(function() {
+  //Check if user hasn't selected more then 3 tags
+  if (ticket.tags.length <= 3) {
+    tickets.push().set({
+      "description": ticket.description,
+      "tags": ticket.tags,
+      "student": "99033279",
+      "teacher": "",
+      "Status": false,
+      "timeAdded": currentTime
+    }).then(function() {
+      res.redirect('../');
+    });
+  } else {
+    console.log("Someone tried to select more then 3 tags");
     res.redirect('../');
-  });
+  }
 });
 
 router.put('/tickets/:id', function(req, res) {
