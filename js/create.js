@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
-	var last_valid_selection = null;
+	var lastValidSelection = null;
+	var isSelectionValid = null;
+	var lastInputValue = null;
 	var dynamicTags = new dynamicTags();
 	dynamicTags.getTags();
 
@@ -53,14 +55,25 @@ $(document).ready(function() {
       // Force Materialize to re-initialize the select
     	$('select').material_select();
 
-
+			// Logic for dropdown
 			$('select').change(function(event) {
-				if ($(this).val().length > 2) {
-					alert('Je kan maar 2 tags selecteren');
-					debugger;
-					$(this).val(last_valid_selection);
+				// Check if error excists otherwise remove it
+				if($(".error-tomanytags").length) {
+					$(".error-tomanytags").remove();
+				}
+				// Check if user selected more then 3 tags
+				if ($(this).val().length > 3) {
+					// Disable form
+			    $("button[type='submit']").prop("disabled", true);
+					// Display error to user
+					var error = $('<p/>', {
+	    			"class": "error error-tomanytags",
+	    			"text": "Je mag maar maximaal 3 tags selecteren."
+	    		}).appendTo(".error-validation");
+
 				} else {
-					last_valid_selection = $(this).val();
+					// Enable form
+			    $("button[type='submit']").prop("disabled", false);
 				}
 			});
 		}

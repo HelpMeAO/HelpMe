@@ -194,3 +194,11 @@ h5 {
     height: 25px;
     color: #FFF;
 }
+
+/******************/
+/* Error messages */
+/******************/
+
+.error {
+  color: #c62828;
+}
