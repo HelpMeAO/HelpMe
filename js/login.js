@@ -16,6 +16,9 @@ var txtLastname = document.getElementById("txtLastname");
 var txtEmailR = document.getElementById('txtEmailR');
 var txtPasswordR = document.getElementById('txtPasswordR');
 
+var error_bar = document.getElementById("error_bar");
+var error_bar_s = document.getElementById("error_bar_s");
+
 // Add login event
 
 btnLogin.addEventListener('click', e=> {
@@ -24,30 +27,24 @@ btnLogin.addEventListener('click', e=> {
 	var pass = txtPassword.value;
 	var auth = firebase.auth()
 	//Sign in
-	var promise = auth.signInWithEmailAndPassword(email,pass);
-	promise.catch(e => console.log(e.message));
+	var promise = auth.signInWithEmailAndPassword(email,pass).catch(function(error){
+        	// An error happened.
+        	console.log(error.code, e.code);
+        	if (error.code == "auth/wrong-password"){
+        		// alert("Wachtwoord is onjuist");
+        		error_bar.classList.remove("hide");
+        		document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
+        	}else if (error.code == "auth/user-not-found"){
+        		// alert("Deze gebruiker bestaat niet");
+        		error_bar.classList.remove("hide");
+        		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+        	}else if (error.code == "auth/invalid-email"){
+        		// alert("Het email adres is onjuist");
+        		error_bar.classList.remove("hide");
+        		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+        	}
 
-// 	switch (e.code){
-//     	case "auth/wrong-password":
-//         	 var err = "Wachtwoord is onjuist"
-//         	break;
-//         case "USER_DOES_NOT_EXIST":
-//         	 var err = "Deze gebruiker bestaat niet"
-//         	break;
-//         case "EMAIL_TAKEN":
-//         	 var err = "Dit Email adres is al in gebruik"
-//         	break;
-//         case "INVALID_EMAIL":
-//         	 var err = "Email of wachtwoord is onjuist"
-//         	break;
-//        // etc
-//   	}
-// console.log("--------------");
-//   	console.log(err);
-// console.log("--------------");
-  	
-
-	
+    	});
 });
 
 btnSignup.addEventListener('click', e=> {
@@ -55,10 +52,24 @@ btnSignup.addEventListener('click', e=> {
 	var email = txtEmailR.value;
 	var pass = txtPasswordR.value;
 	var auth = firebase.auth()
-	//Sign in
-	var promise = auth.createUserWithEmailAndPassword(email,pass);
-	promise.catch(e => console.log(e.message));
 
+	
+	//Sign in
+	var promise = auth.createUserWithEmailAndPassword(email,pass).catch(function(error){
+        	// An error happened.
+        	console.log(error.code, e.code);
+        	if (error.code == "auth/weak-password"){
+        		error_bar_s.classList.remove("hide");
+        		document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
+        	}else if (error.code == "auth/user-not-found"){
+        		error_bar_s.classList.remove("hide");
+        		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+        	}else if (error.code == "auth/invalid-email"){
+        		error_bar_s.classList.remove("hide");
+        		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+        	}
+
+    	});
 });
 
 // //Custom error
@@ -99,7 +110,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
 
 		console.log(firebaseUser.displayName);
-		window.location.replace("/");
+		// window.location.replace("/");
 	}else{
 		console.log("not logged in");
 		btnLogout.classList.add("hide");
