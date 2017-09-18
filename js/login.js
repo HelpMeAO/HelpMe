@@ -9,7 +9,7 @@ var txtPassword = document.getElementById('txtPassword');
 var txtUser = document.getElementById('txtUser');
 var btnLogin = document.getElementById('btnLogin');
 var btnSignup = document.getElementById('btnSignup');
-var btnLogout = document.getElementById('btnLogout'); 
+var btnLogout = document.getElementById('btnLogout');
 
 var txtFirstname = document.getElementById("txtFirstname");
 var txtLastname = document.getElementById("txtLastname");
@@ -31,6 +31,7 @@ btnLogin.addEventListener('click', e=> {
         	// An error happened.
         	console.log(error.code, e.code);
         	if (error.code == "auth/wrong-password"){
+
         		// alert("Wachtwoord is onjuist");
         		error_bar.classList.remove("hide");
         		document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
@@ -53,7 +54,7 @@ btnSignup.addEventListener('click', e=> {
 	var pass = txtPasswordR.value;
 	var auth = firebase.auth()
 
-	
+
 	//Sign in
 	var promise = auth.createUserWithEmailAndPassword(email,pass).catch(function(error){
         	// An error happened.

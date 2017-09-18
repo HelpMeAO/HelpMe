@@ -58,10 +58,14 @@ $(document).ready(function() {
         } else {
           var tagChip = document.createElement("div");
           tagChip.className = "chip";
-          // Get the tag value from the array
-          tagChip.innerHTML = obj.tags;
-          // Add the just generated chip to tdTag
           tdTag.appendChild(tagChip);
+          $(tagChip).attr("data-id", obj.tags);
+          $.ajax({
+            url: "api/tags/" + obj.tags,
+            method: "GET"
+          }).done(function(data) {
+            $('[data-id="' + data.key + '"]').text(data.data.name);
+          });
         }
         tr.appendChild(tdTag);
 
@@ -69,7 +73,7 @@ $(document).ready(function() {
         tdDescription.className = "description";
           if (obj.description != "" && obj.description != null) {
             // Get the description value from the array
-            tdDescription.innerHTML = obj.description;
+            $(tdDescription).text(obj.description);
           }
         tr.appendChild(tdDescription);
 

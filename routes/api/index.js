@@ -28,7 +28,6 @@ var users = database.ref("users");
 
 // Authentication
 var auth = firebase.auth()
-
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -55,21 +54,62 @@ router.get('/tickets/:id', function(req, res) {
 
 router.post('/tickets', urlencodedParser, function(req, res) {
   var ticket = req.body;
+  var tags = ticket.tags;
   var currentTime = Date.now();
   //Check if user hasn't selected more then 3 tags
-  if (ticket.tags.length <= 3) {
-    tickets.push().set({
-      "description": ticket.description,
-      "tags": ticket.tags,
-      "student": "99033279",
-      "teacher": "",
-      "Status": false,
-      "timeAdded": currentTime
-    }).then(function() {
-      res.redirect('../');
+  if ((Array.isArray(ticket.tags) && ticket.tags.length <= 3) || (!Array.isArray(ticket.tags) && ticket.tags.length > 0)) {
+    var storedTags = firebase.database().ref("tags");
+    storedTags.once("value")
+    .then(function(snapshot) {
+      storedTags = snapshot.val();
+      var valSuccess = false;
+      if(!Array.isArray(tags)) {
+        var tagCorrect = false;
+        for(var key in storedTags) {
+          if(tags == key && storedTags[key].active == true) {
+            tagCorrect = true;
+          }
+        }
+        if(!tagCorrect) {
+          console.log("User tried to add a non-excistant or inactive tag");
+          valSuccess = false;
+          res.redirect('../');
+        } else {
+          valSuccess = true;
+        }
+      } else {
+        for (var i = 0; i < tags.length; i++) {
+          var tagCorrect = false;
+          for(var key in storedTags) {
+            if(tags[i] == key && storedTags[key].active == true) {
+              tagCorrect = true;
+            }
+          }
+          if(!tagCorrect) {
+            console.log("User tried to add a non-excistant or inactive tag");
+            valSuccess = false;
+            res.redirect('../');
+          } else {
+            valSuccess = true;
+          }
+        }
+      }
+      if(valSuccess) {
+        console.log("saving ticket");
+        tickets.push().set({
+          "description": ticket.description,
+          "tags": ticket.tags,
+          "student": "99033279",
+          "teacher": "",
+          "Status": false,
+          "timeAdded": currentTime
+        }).then(function() {
+          res.redirect('../');
+        });
+      }
     });
   } else {
-    console.log("Someone tried to select more then 3 tags");
+    console.log("Someone tried to select more then 3 or less than 1 tag(s)");
     res.redirect('../');
   }
 });
