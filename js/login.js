@@ -1,6 +1,5 @@
-(function () {
+$( document ).ready(function () {
 //Login
-
 
 //Get elements
 
@@ -25,27 +24,26 @@ btnLogin.addEventListener('click', e=> {
 	//Get email and pass
 	var email = txtEmail.value;
 	var pass = txtPassword.value;
-	var auth = firebase.auth()
+	var auth = firebase.auth();
 	//Sign in
 	var promise = auth.signInWithEmailAndPassword(email,pass).catch(function(error){
-        	// An error happened.
-        	console.log(error.code, e.code);
-        	if (error.code == "auth/wrong-password"){
+  	// An error happened.
+  	console.log(error.code, e.code);
+  	if (error.code == "auth/wrong-password"){
+    		// alert("Wachtwoord is onjuist");
+    		error_bar.classList.remove("hide");
+    		document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
+    	}else if (error.code == "auth/user-not-found"){
+    		// alert("Deze gebruiker bestaat niet");
+    		error_bar.classList.remove("hide");
+    		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+    	}else if (error.code == "auth/invalid-email"){
+    		// alert("Het email adres is onjuist");
+    		error_bar.classList.remove("hide");
+    		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+    	}
 
-        		// alert("Wachtwoord is onjuist");
-        		error_bar.classList.remove("hide");
-        		document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
-        	}else if (error.code == "auth/user-not-found"){
-        		// alert("Deze gebruiker bestaat niet");
-        		error_bar.classList.remove("hide");
-        		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
-        	}else if (error.code == "auth/invalid-email"){
-        		// alert("Het email adres is onjuist");
-        		error_bar.classList.remove("hide");
-        		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
-        	}
-
-    	});
+		});
 });
 
 btnSignup.addEventListener('click', e=> {
@@ -54,23 +52,21 @@ btnSignup.addEventListener('click', e=> {
 	var pass = txtPasswordR.value;
 	var auth = firebase.auth()
 
-
 	//Sign in
 	var promise = auth.createUserWithEmailAndPassword(email,pass).catch(function(error){
-        	// An error happened.
-        	console.log(error.code, e.code);
-        	if (error.code == "auth/weak-password"){
-        		error_bar_s.classList.remove("hide");
-        		document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
-        	}else if (error.code == "auth/user-not-found"){
-        		error_bar_s.classList.remove("hide");
-        		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
-        	}else if (error.code == "auth/invalid-email"){
-        		error_bar_s.classList.remove("hide");
-        		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
-        	}
-
-    	});
+  	// An error happened.
+  	console.log(error.code, e.code);
+  	if (error.code == "auth/weak-password"){
+  		error_bar_s.classList.remove("hide");
+  		document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
+  	}else if (error.code == "auth/user-not-found"){
+  		error_bar_s.classList.remove("hide");
+  		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+  	}else if (error.code == "auth/invalid-email"){
+  		error_bar_s.classList.remove("hide");
+  		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+  	}
+	});
 });
 
 // //Custom error
@@ -111,11 +107,11 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
 
 		console.log(firebaseUser.displayName);
-		// window.location.replace("/");
+		window.location.replace("/");
 	}else{
 		console.log("not logged in");
 		btnLogout.classList.add("hide");
 	}
 });
 
-}());
+});

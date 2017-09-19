@@ -19,12 +19,14 @@ btnLogout.addEventListener('click', e=> {
 // remove or add hide class for logout button
 firebase.auth().onAuthStateChanged(firebaseUser => {
 	if (firebaseUser){
-		console.log(firebaseUser);
-		console.log("signed in");
+    // User logged in
 		btnLogout.classList.remove("hide");
-	}else{
-		console.log("not logged in");
+	} else {
+    // No user signed-on
 		btnLogout.classList.add("hide");
+		if (window.location.pathname != "/login") {
+			window.location.replace("/login");
+		}
 	}
 });
 
