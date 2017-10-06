@@ -25,8 +25,7 @@ function setAppCookie() {
 	console.log("setting cookie");
 	firebase.auth().currentUser &&
 		firebase.auth().currentUser.getIdToken().then(function(token) {
-		    console.log(Cookies.set('token', token));
-				console.log("getting cookies: " + Cookies.get("token"));
+		    Cookies.set('token', token);
 		});
 }
 
@@ -121,7 +120,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
   	});
 
 		firebaseUser.displayname = name;
-		//window.location.replace("/");
+		window.location.replace("/");
 	}else{
 		console.log("not logged in");
 		btnLogout.classList.add("hide");

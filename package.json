@@ -21,8 +21,10 @@
   },
   "homepage": "https://github.com/HelpMeAO/HelpMe#readme",
   "dependencies": {
+    "async": "^2.5.0",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "firebase-admin": "^4.2.1"
+    "firebase-admin": "^4.2.1",
+    "promise": "^8.0.1"
   }
 }

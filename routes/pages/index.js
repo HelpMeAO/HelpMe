@@ -6,27 +6,37 @@ var firebase = require("firebase-admin");
 var serviceAccount = require('../../ticketmastertest-110a9-firebase-adminsdk-g3hru-c3393e383b.json');
 var router = express.Router();
 
-
 /****************************/
 /** Verification Functions **/
 /****************************/
 
 function verifyRequest(req, res, location) {
+  /*********************/
+  // Req = request header
+  // Res = response
+  // Location = where we want to send the user to
+  /**********************/
+
+  // Get the token from user's cookies
   const token = req.cookies.token;
-  // Check if token excists
-  if (Object.keys(token).length === 0 && req.path != "/login") {
-    console.log("Token is undefined, going back to log-in page");
+
+  // Check if token excist but isn't setup correctly
+  if ((token == undefined || Object.keys(token).length === 0) && (req.path != "/login")) {
     res.redirect("/login");
-  } else if (Object.keys(token).length === 0 && req.path == "/login") {
-    console.log("Token undefined, Sending log-inpage");
+  // Check if token doesn't excist and we're already on the login page.
+  } else if (token == undefined && req.path == "/login") {
     res.sendFile(__dirname + req.path + ".html");
   }
-  if (Object.keys(token).length !== 0) {
+  // Check if token might be correct
+  if (token !== undefined && Object.keys(token).length !== 0) {
+    // Compare token with firebase
     firebase.auth().verifyIdToken(token)
+      // Confirm user is verified and allow him trough
       .then(decodedToken => {
           const uid = decodedToken.sub;
           res.sendFile(__dirname + location);
       })
+      // Throw error
       .catch(err => {
           console.error('WARNING token invalid or user not found', err);
           res.clearCookie("token");
@@ -35,21 +45,18 @@ function verifyRequest(req, res, location) {
   }
 }
 
-/************************/
-/** res.send functions **/
-/************************/
+/*************************/
+/** Handle get requests **/
+/*************************/
 
-// Redirect to
 router.get("/", function(req,res) {
   verifyRequest(req,res,"/Queue.html");
 });
 
-// Redirect to create ticket page
 router.get("/create", function(req,res) {
   verifyRequest(req,res,"/create.html");
 });
 
-// Rederict to the tags page
 router.get("/tags", function(req, res) {
   verifyRequest(req,res,"/tags.html");
 });
@@ -62,4 +69,5 @@ router.get("/login", function(req, res) {
   verifyRequest(req,res,"/login.html");
 });
 
+// Export the router
 module.exports = router;
