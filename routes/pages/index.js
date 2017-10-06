@@ -10,6 +10,54 @@ var router = express.Router();
 /** Verification Functions **/
 /****************************/
 
+function verifyTeacher(req, res, location) {
+  /*********************/
+  // Req = request header
+  // Res = response
+  // Location = where we want to send the user to
+  /**********************/
+
+  // Get the token from user's cookies
+  const token = req.cookies.token;
+
+  // Check if token excist but isn't setup correctly
+  if ((token == undefined || Object.keys(token).length === 0) && (req.path != "/login")) {
+    res.redirect("/login");
+  // Check if token doesn't excist and we're already on the login page.
+  } else if (token == undefined && req.path == "/login") {
+    res.sendFile(__dirname + req.path + ".html");
+  }
+  // Check if token might be correct
+  if (token !== undefined && Object.keys(token).length !== 0) {
+    // Compare token with firebase
+    firebase.auth().verifyIdToken(token)
+      // Confirm user is verified and allow him trough
+      .then(decodedToken => {
+        var user = firebase.database().ref('users/' + decodedToken.uid);
+        user.once('value').then(function(snapshot){
+          if(snapshot.val() == null) {
+            var teacher = false;
+          } else {
+            var teacher = snapshot.val().teacher;
+          }
+          
+          if(teacher == true) {
+            const uid = decodedToken.sub;
+            res.sendFile(__dirname + location);
+          } else {
+            res.redirect("/");
+          }
+        });
+      })
+      // Throw error
+      .catch(err => {
+          console.error('WARNING token invalid or user not found', err);
+          res.clearCookie("token");
+          res.redirect("/login");
+      });
+  }
+}
+
 function verifyRequest(req, res, location) {
   /*********************/
   // Req = request header
@@ -58,7 +106,7 @@ router.get("/create", function(req,res) {
 });
 
 router.get("/tags", function(req, res) {
-  verifyRequest(req,res,"/tags.html");
+  verifyTeacher(req,res,"/tags.html");
 });
 
 router.get("/addtag", function(req, res) {
