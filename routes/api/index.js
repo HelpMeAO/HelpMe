@@ -63,6 +63,48 @@ function verifyRequest(req, res, callback) {
   // Get the token from user's cookies
 }
 
+function verifyTeacher(req, res, callback) {
+  /*********************/
+  // Req = request header
+  // Res = response
+  // Location = where we want to send the user to
+  /**********************/
+
+  const token = req.cookies.token;
+
+  // Check if token might be correct
+  if (token !== undefined && Object.keys(token).length !== 0) {
+    // Compare token with firebase
+    firebase.auth().verifyIdToken(token)
+      // Confirm user is verified
+      .then(decodedToken => {
+          // Check if the user is a teacher
+        var user = firebase.database().ref('users/' + decodedToken.uid);
+        user.once('value').then(function(snapshot){
+          if(snapshot.val() == null) {
+            var teacher = false;
+          } else {
+            var teacher = snapshot.val().teacher;
+          }
+          // Confirm user is a teacher and allow him trough
+          if(teacher == true) {
+            callback(true);
+          } else {
+            callback(false);
+          }
+        });
+      })
+      // Throw error
+      .catch(err => {
+          callback(false);
+      });
+  } else {
+      callback(false);
+  }
+
+  // Get the token from user's cookies
+}
+
 /***********************/
 /*** Handle requests ***/
 /***********************/

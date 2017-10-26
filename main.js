@@ -9,9 +9,7 @@ var express = require("express");
 var router = require("./routes/api");
 var pagesRouter = require("./routes/pages");
 var cookieParser = require("cookie-parser");
-
-// Add the single-sign-on Router
-// var auth = require("./routes/auth");
+var auth = require("./routes/auth");
 
 /*********************/
 /*** Express Logic ***/
@@ -24,6 +22,7 @@ app.use(cookieParser());
 // Add routers
 app.use("/", pagesRouter, cookieParser());
 app.use('/api', router, cookieParser());
+app.use('/auth', auth);
 
 // Make static folders available
 app.use("/css", express.static("css"));
