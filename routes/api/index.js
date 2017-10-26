@@ -30,16 +30,19 @@ var users = database.ref("users");
 var auth = firebase.auth();
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var jsonParser = bodyParser.json();
 
 /****************************/
 /** Verification Function(s) **/
 /****************************/
 
-function verifyRequest(req, res, callback) {
+function verifyRequest(req, res, callback, teacher, initial) {
   /*********************/
   // Req = request header
   // Res = response
-  // Location = where we want to send the user to
+  // callback = next action
+  // teacher = only for teachers?
+  // initial = true/false only for first time actions
   /**********************/
 
   const token = req.cookies.token;
@@ -50,11 +53,44 @@ function verifyRequest(req, res, callback) {
     firebase.auth().verifyIdToken(token)
       // Confirm user is verified and allow him trough
       .then(decodedToken => {
-          callback(true);
+        if(teacher) {
+          var user = firebase.database().ref('users/' + decodedToken.uid);
+          user.once('value').then(function(snapshot){
+            if(snapshot.val() == null) {
+              var teacher = false;
+            } else {
+              var teacher = snapshot.val().teacher;
+            }
+            if(teacher == true) {
+              const uid = decodedToken.sub;
+              callback(true);
+            } else {
+              if(initial) {
+                var user = firebase.database().ref('users/' + decodedToken.uid);
+                user.once('value').then(function(snapshot){
+                  if(snapshot.val() == null) {
+                    callback(true, true);
+                  } else {
+                    callback(false);
+                  }
+                });
+              } else {
+                callback(false)
+              }
+            }
+          });
+        } else {
+          if(!teacher && !initial) {
+            callback(true);
+          } else {
+            callback(false);
+          }
+        }
       })
       // Throw error
       .catch(err => {
-          callback(false);
+        console.log(err);
+        callback(false);
       });
   } else {
       callback(false);
@@ -158,6 +194,84 @@ router.delete('/tickets/:id', function(req, res) {
     }
   }
   verifyRequest(req,res, deleteTicket);
+});
+
+/*******************/
+/*** Users Logic ***/
+/*******************/
+router.get('/users', urlencodedParser, function(req, res) {
+  function getUsers(succes) {
+    if(succes) {
+      users.once('value')
+      .then(function(tagSnapshot) {
+        res.json(tagSnapshot.val());
+      });
+    } else {
+      res.json("You don't have access to teacher information");
+    }
+  }
+  verifyRequest(req,res, getUsers, true, true);
+});
+
+router.get('/users/:id', urlencodedParser, function(req, res) {
+  function getSpecificUser(succes) {
+    if(succes) {
+      var specificUser = firebase.database().ref("users/" + req.params.id);
+      specificUser.once('value')
+      .then(function(snapshot) {
+        res.json(snapshot.val());
+      });
+    } else {
+      res.json("You don't have access to teacher information");
+    }
+  }
+  verifyRequest(req,res, getSpecificUser, true);
+});
+
+router.post('/users', urlencodedParser, function(req, res) {
+  var data = req.body;
+  console.log(req.body);
+  console.log(req);
+  function updateUserInfo(succes, initial) {
+    console.log("succes: :" + succes + " initial: " + initial);
+    if(succes) {
+      const token = req.cookies.token;
+      if(data["email"], data["firstName"], data["lastName"], data["teacher"], data["active"]) {
+        firebase.auth().verifyIdToken(token)
+        // Confirm user is verified and allow him trough
+        .then(decodedToken => {
+          console.log(decodedToken.uid);
+          var specificUser = firebase.database().ref("users/");
+          if(initial) {
+            console.log("Setting data as Initial");
+            specificUser.child(decodedToken.uid).set({
+              "email": data.email,
+        			"firstName": data.firstName,
+        			"lastName": data.lastName,
+        			"teacher": false,
+              "active": true
+            });
+          } else {
+            console.log("Setting data as Teacher");
+            specificUser.child(decodedToken.uid).set({
+              "email": data.email,
+        			"firstName": data.firstName,
+        			"lastName": data.lastName,
+        			"teacher": data.teacher,
+        			"teacher": data.active
+            });
+          }
+        });
+      } else {
+        console.log("The provided data isn't complete");
+        res.json("The provided data isn't complete");
+      }
+    } else {
+      console.log("You don't have access to teacher information");
+      res.json("You don't have access to teacher information");
+    }
+  }
+  verifyRequest(req,res,updateUserInfo,true,true);
 });
 
 /******************/

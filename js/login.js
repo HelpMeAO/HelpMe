@@ -21,11 +21,30 @@ var error_bar_s = document.getElementById("error_bar_s");
 
 
 // Set App Cookie
-function setAppCookie() {
+function setAppCookie(email, firstName, lastName) {
 	console.log("setting cookie");
 	firebase.auth().currentUser &&
 		firebase.auth().currentUser.getIdToken().then(function(token) {
 		    Cookies.set('token', token);
+				if(email !== undefined && firstName !== undefined && lastName!== undefined ) {
+					var request = $.ajax({
+					    url: "/api/users",
+					    type: "POST",
+					    data: {
+								"email": email,
+								"firstName": firstName,
+								"lastName": lastName,
+								"teacher": false
+							}
+					});
+					request.done(function(data) {
+						window.location.replace("/");
+					});
+					request.fail(function(jqXHR, textStatus) {
+						console.log(jqXHR, textStatus);
+					});
+				}
+				window.location.replace("/");
 		});
 }
 
@@ -33,7 +52,7 @@ function setAppCookie() {
 function unsetAppCookie() {
 	Cookies.remove('token', {
 	    domain: window.location.hostname,
-	    path: '/',
+	    path: '/'
 	});
 }
 
@@ -45,88 +64,71 @@ btnLogin.addEventListener('click', e=> {
 	var pass = txtPassword.value;
 	var auth = firebase.auth();
 	//Sign in
-	var promise = auth.signInWithEmailAndPassword(email,pass).catch(function(error){
-		// An error happened.
+	var promise = auth.signInWithEmailAndPassword(email,pass)
+	.then(function(firebaseUser) {
+	   // Success
+	 	setAppCookie();
+	})
+  .catch(function(error) {
 		console.log(error.code, e.code);
 		if (error.code == "auth/wrong-password"){
-  		// alert("Wachtwoord is onjuist");
-  		error_bar.classList.remove("hide");
-  		document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
-  	}else if (error.code == "auth/user-not-found"){
-  		// alert("Deze gebruiker bestaat niet");
-  		error_bar.classList.remove("hide");
-  		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
-  	}else if (error.code == "auth/invalid-email"){
-  		// alert("Het email adres is onjuist");
-  		error_bar.classList.remove("hide");
-  		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
-  	}
-	});
+			// alert("Wachtwoord is onjuist");
+			error_bar.classList.remove("hide");
+			document.getElementById("error_text").innerHTML = "Wachtwoord is onjuist";
+		}else if (error.code == "auth/user-not-found"){
+			// alert("Deze gebruiker bestaat niet");
+			error_bar.classList.remove("hide");
+			document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+		}else if (error.code == "auth/invalid-email"){
+			// alert("Het email adres is onjuist");
+			error_bar.classList.remove("hide");
+			document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+		}
+  });
 });
 
 btnSignup.addEventListener('click', e=> {
+	btnSignup.disabled = true;
 	//Get email and pass
+	var auth = firebase.auth();
 	var email = txtEmailR.value;
 	var pass = txtPasswordR.value;
-	var auth = firebase.auth()
+	var firstName = txtFirstname.value;
+	var lastName = txtLastname.value;
 
 	//Sign in
-	var promise = auth.createUserWithEmailAndPassword(email,pass).catch(function(error){
-  	// An error happened.
-  	console.log(error.code, e.code);
-  	if (error.code == "auth/weak-password"){
-  		error_bar_s.classList.remove("hide");
-  		document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
-  	}else if (error.code == "auth/user-not-found"){
-  		error_bar_s.classList.remove("hide");
-  		document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
-  	}else if (error.code == "auth/invalid-email"){
-  		error_bar_s.classList.remove("hide");
-  		document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
-  	}
-	});
+	var promise = auth.createUserWithEmailAndPassword(email,pass).then(function(firebaseUser) {
+    var user = firebase.auth().currentUser;
+		//set displayname
+		firebaseUser.updateProfile({
+			"email": email,
+			"firstName": firstName,
+			"lastName": lastName,
+			"teacher": false,
+			"active": true
+		}).then(function() {
+			setAppCookie(email, firstName, lastName);
+		}), function(error) {
+			// An error happened.
+				if (error.code == "auth/weak-password") {
+					error_bar_s.classList.remove("hide");
+					document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
+				} else if (error.code == "auth/user-not-found") {
+					error_bar_s.classList.remove("hide");
+					document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+				} else if (error.code == "auth/invalid-email") {
+					error_bar_s.classList.remove("hide");
+					document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+				}
+			}
+		});
 });
 
 //Logout
 btnLogout.addEventListener('click', e=> {
+	// Delete cookie, and log out from Firebase
 	unsetAppCookie();
 	firebase.auth().signOut();
-	console.log("signed Out");
-});
-
-//Add a realtime listener
-// remove or add hide class for logout button
-firebase.auth().onAuthStateChanged(firebaseUser => {
-	if (firebaseUser){
-    // user is logged in
-		console.log("user is logged in");
-    setAppCookie();
-		btnLogout.classList.remove("hide");
-
-		var Firstname = txtFirstname.value;
-		var Lastname = txtLastname.value;
-		var name = "";
-		name += "" + Firstname + " " + Lastname + "";
-
-
-		//set displayname
-
-		firebaseUser.updateProfile({
-      displayName: name
-  	}).then(function() {
-    	// Update successful.
-  	}, function(error) {
-    	// An error happened.
-  	});
-
-		firebaseUser.displayname = name;
-		window.location.replace("/");
-	}else{
-		console.log("not logged in");
-		btnLogout.classList.add("hide");
-		console.log("deleting cookie, if excists");
-		unsetAppCookie();
-	}
 });
 
 });

@@ -22,7 +22,6 @@ $(document).ready(function() {
         // Create table row for ticket
         var tr = document.createElement("tr");
         tr.className = key;
-        console.log(data);
 
         // Create Name td
         var tdName = document.createElement("td");
@@ -60,7 +59,7 @@ $(document).ready(function() {
         tdDescription.className = "description";
           if (obj.description != "" && obj.description != null) {
             // Get the description value from the array
-            tdDescription.innerHTML = obj.description;
+            $(tdDescription).text(obj.description);
           }
         tr.appendChild(tdDescription);
 
@@ -70,7 +69,7 @@ $(document).ready(function() {
             var teacherChip = document.createElement("div");
             teacherChip.className = "chip";
             // Get the tacher value from the array
-            teacherChip.innerHTML = obj.teacher;
+            $(teacherChip).text(obj.teacher);
             tdTeacher.appendChild(teacherChip);
           }
         tr.appendChild(tdTeacher);

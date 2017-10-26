@@ -40,7 +40,7 @@ function verifyTeacher(req, res, location) {
           } else {
             var teacher = snapshot.val().teacher;
           }
-          
+
           if(teacher == true) {
             const uid = decodedToken.sub;
             res.sendFile(__dirname + location);
@@ -107,6 +107,10 @@ router.get("/create", function(req,res) {
 
 router.get("/tags", function(req, res) {
   verifyTeacher(req,res,"/tags.html");
+});
+
+router.get("/users", function(req, res) {
+  verifyTeacher(req,res,"/users.html");
 });
 
 router.get("/addtag", function(req, res) {
