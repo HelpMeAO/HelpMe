@@ -21,12 +21,12 @@ var error_bar_s = document.getElementById("error_bar_s");
 
 
 // Set App Cookie
-function setAppCookie(email, firstName, lastName) {
+function setAppCookie(email, firstName, lastName, register) {
 	console.log("setting cookie");
 	firebase.auth().currentUser &&
 		firebase.auth().currentUser.getIdToken().then(function(token) {
 		    Cookies.set('token', token);
-				if(email !== undefined && firstName !== undefined && lastName!== undefined ) {
+				if(email !== undefined && firstName !== undefined && lastName!== undefined && register == true) {
 					var request = $.ajax({
 					    url: "/api/users",
 					    type: "POST",
@@ -34,17 +34,19 @@ function setAppCookie(email, firstName, lastName) {
 								"email": email,
 								"firstName": firstName,
 								"lastName": lastName,
-								"teacher": false
+								"teacher": false,
+								"active": true
 							}
 					});
 					request.done(function(data) {
 						window.location.replace("/");
 					});
 					request.fail(function(jqXHR, textStatus) {
-						console.log(jqXHR, textStatus);
+						alert(jqXHR, textStatus);
 					});
+				} else {
+					window.location.replace("/");
 				}
-				window.location.replace("/");
 		});
 }
 
@@ -107,7 +109,7 @@ btnSignup.addEventListener('click', e=> {
 			"teacher": false,
 			"active": true
 		}).then(function() {
-			setAppCookie(email, firstName, lastName);
+			setAppCookie(email, firstName, lastName, true);
 		}), function(error) {
 			// An error happened.
 				if (error.code == "auth/weak-password") {

@@ -1,6 +1,12 @@
 $(document).ready(function() {
   // Create a new Queue
   var queue = new queue();
+
+
+  /***************/
+  /*  Que logic  */
+  /***************/
+
   // Get the tickets
   queue.getTickets();
 
@@ -21,12 +27,16 @@ $(document).ready(function() {
 
         // Create table row for ticket
         var tr = document.createElement("tr");
-        tr.className = key;
+        tr.setAttribute("dataid", key);
 
         // Create Name td
         var tdName = document.createElement("td");
         tdName.className = "name";
-        tdName.innerHTML = obj.student;
+        var aHref = document.createElement("a");
+        aHref.innerHTML = obj.student;
+        aHref.className = "modal-trigger"
+        aHref.href = "#modal"
+        tdName.appendChild(aHref);
         tr.appendChild(tdName);
 
         // Create Tag td
@@ -48,10 +58,14 @@ $(document).ready(function() {
         } else {
           var tagChip = document.createElement("div");
           tagChip.className = "chip";
-          // Get the tag value from the array
-          tagChip.innerHTML = obj.tags;
-          // Add the just generated chip to tdTag
           tdTag.appendChild(tagChip);
+          $(tagChip).attr("data-id", obj.tags);
+          $.ajax({
+            url: "api/tags/" + obj.tags,
+            method: "GET"
+          }).done(function(data) {
+            $('[data-id="' + data.key + '"]').text(data.data.name);
+          });
         }
         tr.appendChild(tdTag);
 
@@ -69,7 +83,7 @@ $(document).ready(function() {
             var teacherChip = document.createElement("div");
             teacherChip.className = "chip";
             // Get the tacher value from the array
-            $(teacherChip).text(obj.teacher);
+            teacherChip.innerHTML = obj.teacher;
             tdTeacher.appendChild(teacherChip);
           }
         tr.appendChild(tdTeacher);
@@ -91,7 +105,25 @@ $(document).ready(function() {
           $(tr).hide();
           $(tr).fadeIn("slow");
         }
+
+        /* Event Handlers */
+        $("a.modal-trigger").unbind().click(function(event) {
+          event.preventDefault();
+          var ticketID = $(this).parents("tr").attr("dataid");
+          queue.loadModal(ticketID);
+        });
       }
+    }
+    this.loadModal = function(ticketID) {
+      $.ajax({
+        url: "api/tickets/" + ticketID,
+        method: "GET"
+      }).done(function(data) {
+        $(".ticket-nameholder").text(data.student);
+        $(".ticket-tags").text(data.tags);
+        $(".ticket-description").text(data.description);
+        $('#modal').modal('open');
+      });
     }
 
   }

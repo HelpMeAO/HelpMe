@@ -139,21 +139,62 @@ router.post('/tickets', urlencodedParser, function(req, res) {
   function postTickets(succes) {
     if(succes) {
       var ticket = req.body;
+      var tags = ticket.tags;
       var currentTime = Date.now();
       //Check if user hasn't selected more then 3 tags
-      if (ticket.tags.length <= 3) {
-        tickets.push().set({
-          "description": ticket.description,
-          "tags": ticket.tags,
-          "student": "99033279",
-          "teacher": "",
-          "archived": false,
-          "timeAdded": currentTime
-        }).then(function() {
-          res.redirect('../');
+      if ((Array.isArray(ticket.tags) && ticket.tags.length <= 3) || (!Array.isArray(ticket.tags) && ticket.tags.length > 0)) {
+        var storedTags = firebase.database().ref("tags");
+        storedTags.once("value")
+        .then(function(snapshot) {
+          storedTags = snapshot.val();
+          var valSuccess = false;
+          if(!Array.isArray(tags)) {
+            var tagCorrect = false;
+            for(var key in storedTags) {
+              if(tags == key && storedTags[key].active == true) {
+                tagCorrect = true;
+              }
+            }
+            if(!tagCorrect) {
+              console.log("User tried to add a non-excistant or inactive tag");
+              valSuccess = false;
+              res.redirect('../');
+            } else {
+              valSuccess = true;
+            }
+          } else {
+            for (var i = 0; i < tags.length; i++) {
+              var tagCorrect = false;
+              for(var key in storedTags) {
+                if(tags[i] == key && storedTags[key].active == true) {
+                  tagCorrect = true;
+                }
+              }
+              if(!tagCorrect) {
+                console.log("User tried to add a non-excistant or inactive tag");
+                valSuccess = false;
+                res.redirect('../');
+              } else {
+                valSuccess = true;
+              }
+            }
+          }
+          if(valSuccess) {
+            console.log("saving ticket");
+            tickets.push().set({
+              "description": ticket.description,
+              "tags": ticket.tags,
+              "student": "99033279",
+              "teacher": "",
+              "Status": false,
+              "timeAdded": currentTime
+            }).then(function() {
+              res.redirect('../');
+            });
+          }
         });
       } else {
-        console.log("Someone tried to select more then 3 tags");
+        console.log("Someone tried to select more then 3 or less than 1 tag(s)");
         res.redirect('../');
       }
     } else {
@@ -188,7 +229,7 @@ router.delete('/tickets/:id', function(req, res) {
   function deleteTicket(succes) {
     if(succes) {
       var specificTicket = firebase.database().ref("tickets/" + req.params.id);
-      res.json({ message: 'Todo: ' + req.params.id + ' Deleted' });
+      res.json({ message: 'Ticket: ' + req.params.id + ' Deleted' });
     } else {
       res.json("Not authenticated");
     }
@@ -230,20 +271,15 @@ router.get('/users/:id', urlencodedParser, function(req, res) {
 
 router.post('/users', urlencodedParser, function(req, res) {
   var data = req.body;
-  console.log(req.body);
-  console.log(req);
   function updateUserInfo(succes, initial) {
-    console.log("succes: :" + succes + " initial: " + initial);
     if(succes) {
       const token = req.cookies.token;
       if(data["email"], data["firstName"], data["lastName"], data["teacher"], data["active"]) {
         firebase.auth().verifyIdToken(token)
         // Confirm user is verified and allow him trough
         .then(decodedToken => {
-          console.log(decodedToken.uid);
           var specificUser = firebase.database().ref("users/");
           if(initial) {
-            console.log("Setting data as Initial");
             specificUser.child(decodedToken.uid).set({
               "email": data.email,
         			"firstName": data.firstName,
@@ -252,22 +288,19 @@ router.post('/users', urlencodedParser, function(req, res) {
               "active": true
             });
           } else {
-            console.log("Setting data as Teacher");
             specificUser.child(decodedToken.uid).set({
               "email": data.email,
         			"firstName": data.firstName,
         			"lastName": data.lastName,
         			"teacher": data.teacher,
-        			"teacher": data.active
+        			"active": data.active
             });
           }
         });
       } else {
-        console.log("The provided data isn't complete");
         res.json("The provided data isn't complete");
       }
     } else {
-      console.log("You don't have access to teacher information");
       res.json("You don't have access to teacher information");
     }
   }

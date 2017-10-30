@@ -144,13 +144,22 @@ a.password-link {
 
 #error_bar{
     border:1px solid red;
-    color: red;   
+    color: red;
 }
 
 #error_bar_s{
     border:1px solid red;
-    color: red;   
+    color: red;
 }
+
+/*********************/
+/* User page styling */
+i#downgrade, i#upgrade {
+  vertical-align: middle;
+}
+/*********************/
+
+
 /****************/
 /* Tags styling */
 /****************/

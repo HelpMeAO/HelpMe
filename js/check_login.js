@@ -1,7 +1,5 @@
 var config = {
     apiKey: " AIzaSyBAnXUSdhRfCRV8-fi0CTTeuqrZOg06u9M",
-    authDomain: "ticketmastertest-110a9.firebaseapp.com",
-    databaseURL: "https://ticketmastertest-110a9.firebaseio.com",
   };
 firebase.initializeApp(config);
 (function () {

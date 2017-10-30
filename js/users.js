@@ -26,7 +26,7 @@ $(document).ready(function() {
         // Create Name td
         var tdName = document.createElement("td");
         tdName.className = "name";
-        $(tdName).text(obj.firstName + "" + obj.lastName);
+        $(tdName).text(obj.firstName + " " + obj.lastName);
         tr.appendChild(tdName);
 
         var email = document.createElement("td");
@@ -37,21 +37,44 @@ $(document).ready(function() {
         // Create Teacher td
         var teacher = document.createElement("td");
         teacher.className = "teacher";
-        $(teacher).text(obj.teacher);
+        var button = document.createElement("a");
+        button.href = "#";
+        var icon = document.createElement("i");
+        icon.className="material-icons promotion";
+        if(obj.teacher) {
+          $(icon).text("arrow_drop_down");
+          $(icon).attr("id", "downgrade");
+          $(teacher).text("Leraar");
+          button.appendChild(icon);
+        } else if (!obj.teacher) {
+          $(icon).text("arrow_drop_up");
+          $(icon).attr("id", "upgrade");
+          $(teacher).text("Student");
+          button.appendChild(icon);
+        }
+        teacher.appendChild(button);
         tr.appendChild(teacher);
 
         // Create Teacher td
-        var status = document.createElement("td");
-        status.className = "status";
-        $(status).text(obj.status);
-        tr.appendChild(status);
+        var active = document.createElement("td");
+        active.className = "active";
+        if(obj.active) {
+          $(active).text("Actief");
+        } else if(!obj.active) {
+          $(active).text("Inactief");
+        }
+        tr.appendChild(active);
 
           // Finally append everything to the table
           $(".tbody-wrapper").append(tr);
           $(tr).hide();
           $(tr).fadeIn("slow");
         }
+        $("i.promotion").click(function() {
+          var user = $(this).parents("tr").children(".name").text();
+          var succes = confirm("Wil je: '" + user + "' .... naar student?");
+          console.log(succes);
+        });
       }
-
   }
 });
