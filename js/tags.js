@@ -99,49 +99,121 @@
 		// Create a way to generate the html for the tags.
 		this.generateTagHTML =  function(title, text, id, active, test) {
 			if (active == true){
-    			var html = '<div data-id="'+id+'" class="card blue-grey darken-1">';
-    		}
-    		else{
-    			var html = '<div data-id="'+id+'" class="card blue-grey darken-4">';
-    		}
-				html +=		'<div class="card-content white-text">'+
-								'<span class="card-title">'+title+'</span><p>'+text+'</p>'+
-							'</div>'+
-							'<div class="card-action">';
+					var html = document.createElement("div");
+					html.className = "card blue-grey darken-1";
+					$(html).attr("data-id", id);
+    	} else {
+					var html = document.createElement("div");
+					html.className = "card blue-grey darken-4";
+					$(html).attr("data-id", id);
+    	}
+			var cardContent = document.createElement("div");
+			cardContent.className = "card-content white-text";
+			$(html).append(cardContent);
+
+			var cardContentSpan = document.createElement("span");
+			cardContentSpan.className="card-title";
+			$(cardContentSpan).text(title);
+			$(cardContent).append(cardContentSpan);
+
+			var cardContentSpanP = document.createElement("p");
+			$(cardContentSpanP).text(text);
+			$(cardContentSpan).append(cardContentSpanP);
+
+			var cardAction = document.createElement("div");
+			cardAction.className = "card-action";
+			$(html).append(cardAction);
+
 			if(active == true){
-	    		html +=			'<a href="javascript:void(0)" class="changeTag">Wijzig</a>'+
-								'<a href="javascript:void(0)" class="archieveTag">Archieveer</a>'+
-								'<div class="confirmArchieveDiv">'+
-									'<span class="confirmArchieve">Weet u zeker dat u deze tag wilt archieveren?'+
-										'<a class="archieveTagConfirm btn waves-effect waves-light">Ja</a>'+
-										'<a class="archieveTagCancel btn waves-effect waves-light">Nee</a>'+
-									'</span>'+
-								'</div>';
+
+				var aButton = document.createElement("a");
+				aButton.href = "javascript:void(0)";
+				aButton.className = "changetTag";
+				$(aButton).text("Wijzig");
+				$(cardAction).append(aButton);
+
+				var aButton2 = document.createElement("a");
+				aButton2.href = "javascript:void(0)";
+				aButton2.className = "archieveTag";
+				$(aButton2).text("Archieveer");
+				$(cardAction).append(aButton2);
+
+				var confirmArchievediv = document.createElement("div");
+				confirmArchievediv.className="confirmArchieveDiv";
+				$(cardAction).append(confirmArchievediv);
+
+				var spanConfirmArchive = document.createElement("span");
+				spanConfirmArchive.className="confirmArchieve";
+				$(spanConfirmArchive).text("Weet u zeker dat u deze tag wilt archiveren?");
+				$(confirmArchievediv).append(spanConfirmArchive);
+
+				var archiveTagConfirm = document.createElement("a");
+				archiveTagConfirm.className = "archieveTagConfirm btn waves-effect waves-light";
+				$(archiveTagConfirm).text("Ja");
+				$(spanConfirmArchive).append(archiveTagConfirm);
+
+				var archieveTagCancel = document.createElement("a");
+				archiveTagConfirm.className = "archieveTagCancel btn waves-effect waves-light";
+				$(archiveTagConfirm).text("Nee");
+				$(spanConfirmArchive).append(archieveTagCancel);
+
 			}
 			else{
-				html +=			'<a href="javascript:void(0)" class="activeTag">Activeer</a>'+
-    							'<div class="confirmActiveDiv">'+
-									'<span class="confirmActive">Weet u zeker dat u deze tag wilt activeren?'+
-										'<a class="activeTagConfirm btn waves-effect waves-light">Ja</a>'+
-										'<a class="activeTagCancel btn waves-effect waves-light">Nee</a>'+
-									'</span>'+
-								'</div>';
+				var aButton = document.createElement("a");
+				aButton.href = "javascript:void(0)";
+				aButton.className = "activeTag";
+				$(aButton).text("Activeer");
+				$(cardAction).append(aButton);
+
+				var confirmActiveDiv = document.createElement("div");
+				confirmActiveDiv.className="confirmActiveDiv";
+				$(confirmActiveDiv).append(cardAction);
+
+				var spanConfirmActive = document.createElement("span");
+				spanConfirmActive.className="spanConfirmActive";
+				$(spanConfirmActive).text("Weet u zeker dat u deze tag wilt activeren?");
+				$(confirmActiveDiv).append(spanConfirmActive);
+
+				var activeTagConfirm = document.createElement("a");
+				activeTagConfirm.className = "activeTagConfirm btn waves-effect waves-light";
+				$(activeTagConfirm).text("Ja");
+				$(spanConfirmActive).append(activeTagConfirm);
+
+				var activeTagCancel = document.createElement("a");
+				activeTagCancel.className = "activeTagCancel btn waves-effect waves-ligh";
+				$(activeTagCancel).text("Nee");
+				$(spanConfirmActive).append(activeTagCancel);
 			}
 				if(test){
-					html +=		'<a href="javascript:void(0)" class="deleteTag">Verwijder</a>'+
-								'<div class="confirmDeleteDiv">'+
-									'<span class="confirmDelete">Weet u zeker dat u deze tag wilt verwijderen?'+
-										'<a class="deleteTagConfirm btn waves-effect waves-light">Ja</a>'+
-										'<a class="deleteTagCancel btn waves-effect waves-light">Nee</a>'+
-									'</span>'+
-								'</div>';
-				}
-				html +=		'</div>'+
-						'</div>';
-    		var col 		= document.createElement('div');
-    		col.className = "col s12 m6";
-     		col.innerHTML = html;
+					var aButton = document.createElement("a");
+					aButton.href = "javascript:void(0)";
+					aButton.className = "deleteTag";
+					$(aButton).text("Verwijder");
+					$(cardAction).append(aButton);
 
+					var confirmDeleteDiv = document.createElement("div");
+					confirmDeleteDiv.className="confirmDeleteDiv";
+					$(cardAction).append(confirmDeleteDiv);
+
+					var confirmDelete = document.createElement("span");
+					confirmDelete.className="confirmDelete";
+					$(confirmDelete).text("Weet u zeker dat u deze tag wilt verwijderen?");
+					$(confirmDeleteDiv).append(confirmDelete);
+
+					var deleteTagConfirm = document.createElement("a");
+					deleteTagConfirm.className = "deleteTagConfirm btn waves-effect waves-light";
+					$(deleteTagConfirm).text("Ja");
+					$(confirmDelete).append(deleteTagConfirm);
+
+					var deleteTagCancel = document.createElement("a");
+					deleteTagCancel.className = "deleteTagCancel btn waves-effect waves-light";
+					$(deleteTagCancel).text("Nee");
+					$(confirmDelete).append(deleteTagCancel);
+				}
+
+    		var col = document.createElement('div');
+    		col.className = "col s12 m6";
+     		$(col).append(html);
     		return col;
 		},
 		// Displays a single tag and adds it to the tagList object.
