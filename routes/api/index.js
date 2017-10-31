@@ -53,35 +53,40 @@ function verifyRequest(req, res, callback, teacher, initial) {
     firebase.auth().verifyIdToken(token)
       // Confirm user is verified and allow him trough
       .then(decodedToken => {
+        var user = firebase.database().ref('users/' + decodedToken.uid);
         if(teacher) {
-          var user = firebase.database().ref('users/' + decodedToken.uid);
           user.once('value').then(function(snapshot){
+            var active = snapshot.val().active;
             if(snapshot.val() == null) {
               var teacher = false;
             } else {
               var teacher = snapshot.val().teacher;
             }
-            if(teacher == true) {
+            if((teacher == true || teacher == "true") && (active == true || active == "true")) {
               const uid = decodedToken.sub;
               callback(true);
+            } else if(initial) {
+              user.once('value').then(function(snapshot){
+                if(snapshot.val() == null) {
+                  callback(true, true);
+                } else {
+                  callback(false);
+                }
+              });
             } else {
-              if(initial) {
-                var user = firebase.database().ref('users/' + decodedToken.uid);
-                user.once('value').then(function(snapshot){
-                  if(snapshot.val() == null) {
-                    callback(true, true);
-                  } else {
-                    callback(false);
-                  }
-                });
-              } else {
-                callback(false)
-              }
+              callback(false);
             }
           });
         } else {
           if(!teacher && !initial) {
-            callback(true);
+            user.once('value').then(function(snapshot){
+              var active = snapshot.val().active;
+              if(active == true || active == "true") {
+                callback(true);
+              } else {
+                callback(false);
+              }
+            });
           } else {
             callback(false);
           }
@@ -95,7 +100,6 @@ function verifyRequest(req, res, callback, teacher, initial) {
   } else {
       callback(false);
   }
-
   // Get the token from user's cookies
 }
 
@@ -303,7 +307,7 @@ router.post('/users', urlencodedParser, function(req, res) {
         res.json({error: "The provided data isn't complete", status: 500});
       }
     } else {
-      res.json({error: "The provided data isn't complete", status: 500});
+      res.json({error: "You don't have access to teacher information", status: 500});
     }
   }
   verifyRequest(req,res,updateUserInfo,true,true);
@@ -326,12 +330,13 @@ router.post('/users/:id', urlencodedParser, function(req, res) {
       			"teacher": data.teacher,
       			"active": data.active
           });
+          res.json({succes: "Successfully created account", status: 200});
         });
       } else {
-        res.json("The provided data isn't complete");
+        res.json({error: "The provided data isn't complete", status: 500});
       }
     } else {
-      res.json("You don't have access to teacher information");
+      res.json({error: "You don't have access to teacher information", status: 500});
     }
   }
   verifyRequest(req,res,updateUserInfo,true);

@@ -25,31 +25,39 @@ function setAppCookie(email, firstName, lastName, register) {
 	console.log("setting cookie");
 	firebase.auth().currentUser &&
 		firebase.auth().currentUser.getIdToken().then(function(token) {
-		    Cookies.set('token', token);
-				if(email !== undefined && firstName !== undefined && lastName!== undefined && register == true) {
-					var request = $.ajax({
-					    url: "/api/users",
-							datatype: "json",
-					    type: "POST",
-					    data: {
-								"email": email,
-								"firstName": firstName,
-								"lastName": lastName,
-								"teacher": false,
-								"active": true
-							}
-					});
-					request.done(function(data) {
-						window.location.replace("/");
-					});
-					request.fail(function(jqXHR, textStatus) {
-						alert(jqXHR);
-						alert(textStatus);
-					});
-				} else {
-					window.location.replace("/");
-				}
-		});
+				var user = firebase.database().ref('users/' + firebase.auth().currentUser.uid);
+				user.once('value').then(function(snapshot){
+					var active = snapshot.val().active;
+					if(active == true || active == "true") {
+						Cookies.set('token', token);
+						if(email !== undefined && firstName !== undefined && lastName!== undefined && register == true) {
+							var request = $.ajax({
+							    url: "/api/users",
+									datatype: "json",
+							    type: "POST",
+							    data: {
+										"email": email,
+										"firstName": firstName,
+										"lastName": lastName,
+										"teacher": false,
+										"active": true
+									}
+							});
+							request.done(function(data) {
+								window.location.replace("/");
+							});
+							request.fail(function(jqXHR, textStatus) {
+								alert(jqXHR);
+								alert(textStatus);
+							});
+						} else {
+							window.location.replace("/");
+						}
+					} else {
+						alert("Je account is Inactief, neem contact op met een leeraar");
+					}
+				});
+			});
 }
 
 // Remove App Cookie
