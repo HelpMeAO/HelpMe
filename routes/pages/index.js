@@ -37,17 +37,23 @@ function verifyTeacher(req, res, location) {
       .then(decodedToken => {
         var user = firebase.database().ref('users/' + decodedToken.uid);
         user.once('value').then(function(snapshot){
-          if(snapshot.val() == null) {
-            var teacher = false;
+          var active = snapshot.val().active;
+          if(active == "false" || active == false) {
+            res.clearCookie("token");
+            res.redirect("/login");
           } else {
-            var teacher = snapshot.val().teacher;
-          }
+            if(snapshot.val() == null) {
+              var teacher = false;
+            } else {
+              var teacher = snapshot.val().teacher;
+            }
 
-          if(teacher == true || teacher == "true") {
-            const uid = decodedToken.sub;
-            res.sendFile(__dirname + location);
-          } else {
-            res.redirect("/");
+            if(teacher == true || teacher == "true") {
+              const uid = decodedToken.sub;
+              res.sendFile(__dirname + location);
+            } else {
+              res.redirect("/");
+            }
           }
         });
       })
