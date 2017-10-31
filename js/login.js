@@ -29,6 +29,7 @@ function setAppCookie(email, firstName, lastName, register) {
 				if(email !== undefined && firstName !== undefined && lastName!== undefined && register == true) {
 					var request = $.ajax({
 					    url: "/api/users",
+							datatype: "json",
 					    type: "POST",
 					    data: {
 								"email": email,
@@ -42,7 +43,8 @@ function setAppCookie(email, firstName, lastName, register) {
 						window.location.replace("/");
 					});
 					request.fail(function(jqXHR, textStatus) {
-						alert(jqXHR, textStatus);
+						alert(jqXHR);
+						alert(textStatus);
 					});
 				} else {
 					window.location.replace("/");
@@ -117,10 +119,10 @@ btnSignup.addEventListener('click', e=> {
 					document.getElementById("error_text_s").innerHTML = "Wachtwoord is te zwak, Het moet uit minimaal 6 karakters bestaan";
 				} else if (error.code == "auth/user-not-found") {
 					error_bar_s.classList.remove("hide");
-					document.getElementById("error_text").innerHTML = "Deze gebruiker bestaat niet";
+					document.getElementById("error_text_s").innerHTML = "Deze gebruiker bestaat niet";
 				} else if (error.code == "auth/invalid-email") {
 					error_bar_s.classList.remove("hide");
-					document.getElementById("error_text").innerHTML = "Het email adres is onjuist";
+					document.getElementById("error_text_s").innerHTML = "Het email adres is onjuist";
 				}
 			}
 		});

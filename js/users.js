@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
   // Create a new Queue
   var users = new user();
@@ -71,9 +72,31 @@ $(document).ready(function() {
           $(tr).fadeIn("slow");
         }
         $("i.promotion").click(function() {
-          var user = $(this).parents("tr").children(".name").text();
-          var succes = confirm("Wil je: '" + user + "' .... naar student?");
-          console.log(succes);
+          var user = $(this).parents("tr").attr("class");
+          $.ajax({
+            url: "api/users/" + user,
+            method: "GET"
+          }).done(function(data) {
+            var action = data.teacher;
+            var string = "Wil je, " + data.firstName + " " + data.lastName;
+            var userData = data;
+            if(teacher) {
+              string += " downgraden naar student?";
+              var succes = confirm(string);
+              data.teacher = false;
+            } else {
+              string += " upgraden naar leraar?";
+              var succes = confirm(string);
+              data.teacher = true;
+            }
+            if(succes) {
+              $.ajax({
+    					    url: "/api/users",
+    					    type: "POST",
+    					    data: data
+    					});
+            }
+          });
         });
       }
   }

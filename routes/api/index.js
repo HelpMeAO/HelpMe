@@ -287,6 +287,7 @@ router.post('/users', urlencodedParser, function(req, res) {
         			"teacher": false,
               "active": true
             });
+            res.json({succes: "Successfully created account", status: 200});
           } else {
             specificUser.child(decodedToken.uid).set({
               "email": data.email,
@@ -295,7 +296,36 @@ router.post('/users', urlencodedParser, function(req, res) {
         			"teacher": data.teacher,
         			"active": data.active
             });
+            res.json({succes: "Successfully created account", status: 200});
           }
+        });
+      } else {
+        res.json({error: "The provided data isn't complete", status: 500});
+      }
+    } else {
+      res.json({error: "The provided data isn't complete", status: 500});
+    }
+  }
+  verifyRequest(req,res,updateUserInfo,true,true);
+});
+
+router.post('/users/:id', urlencodedParser, function(req, res) {
+  var data = req.body;
+  function updateUserInfo(succes, initial) {
+    if(succes) {
+      const token = req.cookies.token;
+      if(data["email"], data["firstName"], data["lastName"], data["teacher"], data["active"]) {
+        firebase.auth().verifyIdToken(token)
+        // Confirm user is verified and allow him trough
+        .then(decodedToken => {
+          var specificUser = firebase.database().ref("users/" + req.params.id);
+          specificUser.update({
+            "email": data.email,
+      			"firstName": data.firstName,
+      			"lastName": data.lastName,
+      			"teacher": data.teacher,
+      			"active": data.active
+          });
         });
       } else {
         res.json("The provided data isn't complete");
@@ -304,7 +334,7 @@ router.post('/users', urlencodedParser, function(req, res) {
       res.json("You don't have access to teacher information");
     }
   }
-  verifyRequest(req,res,updateUserInfo,true,true);
+  verifyRequest(req,res,updateUserInfo,true);
 });
 
 /******************/
