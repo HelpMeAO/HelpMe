@@ -21,14 +21,18 @@ var error_bar_s = document.getElementById("error_bar_s");
 
 
 // Set App Cookie
-function setAppCookie(email, firstName, lastName, register) {
+function setAppCookie(email, initial, firstName, lastName, register) {
 	console.log("setting cookie");
 	firebase.auth().currentUser &&
 		firebase.auth().currentUser.getIdToken().then(function(token) {
 				var user = firebase.database().ref('users/' + firebase.auth().currentUser.uid);
 				user.once('value').then(function(snapshot){
-					var active = snapshot.val().active;
-					if(active == true || active == "true") {
+					if(typeof(snapshot.val()) !== null) {
+						var active = snapshot.val().active;
+					} else {
+						var active = false;
+					}
+					if(active == true || active == "true" || initial == true) {
 						Cookies.set('token', token);
 						if(email !== undefined && firstName !== undefined && lastName!== undefined && register == true) {
 							var request = $.ajax({
@@ -119,7 +123,7 @@ btnSignup.addEventListener('click', e=> {
 			"teacher": false,
 			"active": true
 		}).then(function() {
-			setAppCookie(email, firstName, lastName, true);
+			setAppCookie(email, true, firstName, lastName, true);
 		}), function(error) {
 			// An error happened.
 				if (error.code == "auth/weak-password") {
