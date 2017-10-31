@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var firebase = require("firebase-admin");
 var serviceAccount = require('../../ticketmastertest-110a9-firebase-adminsdk-g3hru-c3393e383b.json');
 var router = express.Router();
+var app = express();
+
 
 /****************************/
 /** Verification Functions **/
@@ -41,7 +43,7 @@ function verifyTeacher(req, res, location) {
             var teacher = snapshot.val().teacher;
           }
 
-          if(teacher == true) {
+          if(teacher == true || teacher == "true") {
             const uid = decodedToken.sub;
             res.sendFile(__dirname + location);
           } else {
@@ -82,7 +84,16 @@ function verifyRequest(req, res, location) {
       // Confirm user is verified and allow him trough
       .then(decodedToken => {
           const uid = decodedToken.sub;
-          res.sendFile(__dirname + location);
+          var user = firebase.database().ref('users/' + decodedToken.uid);
+          user.once('value').then(function(snapshot){
+            var active = snapshot.val().active;
+            if(active == true || active == "true" ) {
+              res.sendFile(__dirname + location);
+            } else {
+              res.clearCookie("token");
+              res.redirect("/login");
+            }
+          });
       })
       // Throw error
       .catch(err => {
@@ -107,6 +118,10 @@ router.get("/create", function(req,res) {
 
 router.get("/tags", function(req, res) {
   verifyTeacher(req,res,"/tags.html");
+});
+
+router.get("/users", function(req, res) {
+  verifyTeacher(req,res,"/users.html");
 });
 
 router.get("/addtag", function(req, res) {

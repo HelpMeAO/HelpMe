@@ -35,12 +35,14 @@
             <li><a href="/"><i class="material-icons">list</i></a></li>
             <li><a href="/create"><i class="material-icons">add</i></a></li>
             <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="/users"><i class="material-icons">supervisor_account</i></a></li>
             <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
           </ul>
           <ul class="side-nav" id="mobile-demo">
              <li><a href="/"><i class="material-icons">list</i></a></li>
             <li><a href="/create"><i class="material-icons">add</i></a></li>
             <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="/users"><i class="material-icons">supervisor_account</i></a></li>
             <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
           </ul>
         </div>
@@ -154,13 +156,13 @@
     <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
 <script>
   // Initialize Firebase
-  // TODO: Replace with your project's customized code snippet
   var config = {
     apiKey: " AIzaSyBAnXUSdhRfCRV8-fi0CTTeuqrZOg06u9M",
     authDomain: "ticketmastertest-110a9.firebaseapp.com",
-    databaseURL: "https://ticketmastertest-110a9.firebaseio.com",
+    databaseURL: "https://ticketmastertest-110a9.firebaseio.com"
   };
   firebase.initializeApp(config);
+  firebase.auth();
 </script>
     <script src="js/login.js"></script>
     <script>

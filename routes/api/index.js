@@ -30,16 +30,19 @@ var users = database.ref("users");
 var auth = firebase.auth();
 var router = express.Router();
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var jsonParser = bodyParser.json();
 
 /****************************/
 /** Verification Function(s) **/
 /****************************/
 
-function verifyRequest(req, res, callback) {
+function verifyRequest(req, res, callback, teacher, initial) {
   /*********************/
   // Req = request header
   // Res = response
-  // Location = where we want to send the user to
+  // callback = next action
+  // teacher = only for teachers?
+  // initial = true/false only for first time actions
   /**********************/
 
   const token = req.cookies.token;
@@ -50,16 +53,53 @@ function verifyRequest(req, res, callback) {
     firebase.auth().verifyIdToken(token)
       // Confirm user is verified and allow him trough
       .then(decodedToken => {
-          callback(true);
+        var user = firebase.database().ref('users/' + decodedToken.uid);
+        if(teacher) {
+          user.once('value').then(function(snapshot){
+            var active = snapshot.val().active;
+            if(snapshot.val() == null) {
+              var teacher = false;
+            } else {
+              var teacher = snapshot.val().teacher;
+            }
+            if((teacher == true || teacher == "true") && (active == true || active == "true")) {
+              const uid = decodedToken.sub;
+              callback(true);
+            } else if(initial) {
+              user.once('value').then(function(snapshot){
+                if(snapshot.val() == null) {
+                  callback(true, true);
+                } else {
+                  callback(false);
+                }
+              });
+            } else {
+              callback(false);
+            }
+          });
+        } else {
+          if(!teacher && !initial) {
+            user.once('value').then(function(snapshot){
+              var active = snapshot.val().active;
+              if(active == true || active == "true") {
+                callback(true);
+              } else {
+                callback(false);
+              }
+            });
+          } else {
+            callback(false);
+          }
+        }
       })
       // Throw error
       .catch(err => {
-          callback(false);
+        console.log(err);
+        callback(false);
       });
   } else {
       callback(false);
   }
-
   // Get the token from user's cookies
 }
 
@@ -103,21 +143,62 @@ router.post('/tickets', urlencodedParser, function(req, res) {
   function postTickets(succes) {
     if(succes) {
       var ticket = req.body;
+      var tags = ticket.tags;
       var currentTime = Date.now();
       //Check if user hasn't selected more then 3 tags
-      if (ticket.tags.length <= 3) {
-        tickets.push().set({
-          "description": ticket.description,
-          "tags": ticket.tags,
-          "student": "99033279",
-          "teacher": "",
-          "archived": false,
-          "timeAdded": currentTime
-        }).then(function() {
-          res.redirect('../');
+      if ((Array.isArray(ticket.tags) && ticket.tags.length <= 3) || (!Array.isArray(ticket.tags) && ticket.tags.length > 0)) {
+        var storedTags = firebase.database().ref("tags");
+        storedTags.once("value")
+        .then(function(snapshot) {
+          storedTags = snapshot.val();
+          var valSuccess = false;
+          if(!Array.isArray(tags)) {
+            var tagCorrect = false;
+            for(var key in storedTags) {
+              if(tags == key && storedTags[key].active == true) {
+                tagCorrect = true;
+              }
+            }
+            if(!tagCorrect) {
+              console.log("User tried to add a non-excistant or inactive tag");
+              valSuccess = false;
+              res.redirect('../');
+            } else {
+              valSuccess = true;
+            }
+          } else {
+            for (var i = 0; i < tags.length; i++) {
+              var tagCorrect = false;
+              for(var key in storedTags) {
+                if(tags[i] == key && storedTags[key].active == true) {
+                  tagCorrect = true;
+                }
+              }
+              if(!tagCorrect) {
+                console.log("User tried to add a non-excistant or inactive tag");
+                valSuccess = false;
+                res.redirect('../');
+              } else {
+                valSuccess = true;
+              }
+            }
+          }
+          if(valSuccess) {
+            console.log("saving ticket");
+            tickets.push().set({
+              "description": ticket.description,
+              "tags": ticket.tags,
+              "student": "99033279",
+              "teacher": "",
+              "Status": false,
+              "timeAdded": currentTime
+            }).then(function() {
+              res.redirect('../');
+            });
+          }
         });
       } else {
-        console.log("Someone tried to select more then 3 tags");
+        console.log("Someone tried to select more then 3 or less than 1 tag(s)");
         res.redirect('../');
       }
     } else {
@@ -152,12 +233,113 @@ router.delete('/tickets/:id', function(req, res) {
   function deleteTicket(succes) {
     if(succes) {
       var specificTicket = firebase.database().ref("tickets/" + req.params.id);
-      res.json({ message: 'Todo: ' + req.params.id + ' Deleted' });
+      res.json({ message: 'Ticket: ' + req.params.id + ' Deleted' });
     } else {
       res.json("Not authenticated");
     }
   }
   verifyRequest(req,res, deleteTicket);
+});
+
+/*******************/
+/*** Users Logic ***/
+/*******************/
+router.get('/users', urlencodedParser, function(req, res) {
+  function getUsers(succes) {
+    if(succes) {
+      users.once('value')
+      .then(function(tagSnapshot) {
+        res.json(tagSnapshot.val());
+      });
+    } else {
+      res.json("You don't have access to teacher information");
+    }
+  }
+  verifyRequest(req,res, getUsers, true, true);
+});
+
+router.get('/users/:id', urlencodedParser, function(req, res) {
+  function getSpecificUser(succes) {
+    if(succes) {
+      var specificUser = firebase.database().ref("users/" + req.params.id);
+      specificUser.once('value')
+      .then(function(snapshot) {
+        res.json(snapshot.val());
+      });
+    } else {
+      res.json("You don't have access to teacher information");
+    }
+  }
+  verifyRequest(req,res, getSpecificUser, true);
+});
+
+router.post('/users', urlencodedParser, function(req, res) {
+  var data = req.body;
+  function updateUserInfo(succes, initial) {
+    if(succes) {
+      const token = req.cookies.token;
+      if(data["email"], data["firstName"], data["lastName"], data["teacher"], data["active"]) {
+        firebase.auth().verifyIdToken(token)
+        // Confirm user is verified and allow him trough
+        .then(decodedToken => {
+          var specificUser = firebase.database().ref("users/");
+          if(initial) {
+            specificUser.child(decodedToken.uid).set({
+              "email": data.email,
+        			"firstName": data.firstName,
+        			"lastName": data.lastName,
+        			"teacher": false,
+              "active": true
+            });
+            res.json({succes: "Successfully created account", status: 200});
+          } else {
+            specificUser.child(decodedToken.uid).set({
+              "email": data.email,
+        			"firstName": data.firstName,
+        			"lastName": data.lastName,
+        			"teacher": data.teacher,
+        			"active": data.active
+            });
+            res.json({succes: "Successfully created account", status: 200});
+          }
+        });
+      } else {
+        res.json({error: "The provided data isn't complete", status: 500});
+      }
+    } else {
+      res.json({error: "You don't have access to teacher information", status: 500});
+    }
+  }
+  verifyRequest(req,res,updateUserInfo,true,true);
+});
+
+router.post('/users/:id', urlencodedParser, function(req, res) {
+  var data = req.body;
+  function updateUserInfo(succes, initial) {
+    if(succes) {
+      const token = req.cookies.token;
+      if(data["email"], data["firstName"], data["lastName"], data["teacher"], data["active"]) {
+        firebase.auth().verifyIdToken(token)
+        // Confirm user is verified and allow him trough
+        .then(decodedToken => {
+          var specificUser = firebase.database().ref("users/" + req.params.id);
+          specificUser.update({
+            "email": data.email,
+      			"firstName": data.firstName,
+      			"lastName": data.lastName,
+      			"teacher": data.teacher,
+      			"active": data.active
+          });
+          res.json({succes: "Successfully created account", status: 200});
+        });
+      } else {
+        res.json({error: "The provided data isn't complete", status: 500});
+      }
+    } else {
+      res.json({error: "You don't have access to teacher information", status: 500});
+    }
+  }
+  verifyRequest(req,res,updateUserInfo,true);
 });
 
 /******************/

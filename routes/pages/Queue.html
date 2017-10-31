@@ -20,12 +20,14 @@
             <li><a href="/"><i class="material-icons">list</i></a></li>
             <li><a href="/create"><i class="material-icons">add</i></a></li>
             <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="/users"><i class="material-icons">supervisor_account</i></a></li>
             <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
           </ul>
           <ul class="side-nav" id="mobile-demo">
              <li><a href="/"><i class="material-icons">list</i></a></li>
             <li><a href="/create"><i class="material-icons">add</i></a></li>
             <li><a href="/tags"><i class="material-icons">label</i></a></li>
+            <li><a href="/users"><i class="material-icons">supervisor_account</i></a></li>
             <li><a href="#" id="btnLogout" class="hide"><i class="material-icons">power_settings_new</i></a></li>
           </ul>
         </div>
@@ -36,14 +38,14 @@
     <div class="container">
         <div class="row">
             <div class="col s12 table-wrapper">
-            <table class="centered responsive-table">
+            <table class="centered">
                 <thead>
                   <tr>
-                      <th class="col s2 m2 l2">Naam</th>
-                      <th class="col s2 m2 l3">Tags</th>
-                      <th class="col s4 m4 l3">Beschrijving</th>
-                      <th class="col s2 m2 l2">Docent</th>
-                      <th class="col s2 m2 l2">Status</th>
+                      <th class="">Naam</th>
+                      <th class="">Tags</th>
+                      <th class="">Beschrijving</th>
+                      <th class="">Docent</th>
+                      <th class="">Status</th>
                   </tr>
                 </thead>
                 <tbody class="tbody-wrapper">
@@ -53,10 +55,21 @@
         </div>
     </div>
     </div>
+    <div id="modal" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <h4 class="ticket-nameholder"></h4>
+        <hr>
+        <p class="ticket-description"></p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+      </div>
+    </div>
     <!--Import jQuery before materialize.js-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+    <script src="js/cookies.js"></script>
     <script src="js/main.js"></script>
     <script src="js/queue.js"></script>
     <script src="js/check_login.js"></script>
