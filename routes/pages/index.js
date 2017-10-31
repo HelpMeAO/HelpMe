@@ -37,23 +37,21 @@ function verifyTeacher(req, res, location) {
       .then(decodedToken => {
         var user = firebase.database().ref('users/' + decodedToken.uid);
         user.once('value').then(function(snapshot){
-          var active = snapshot.val().active;
-          if(active == "false" || active == false) {
-            res.clearCookie("token");
-            res.redirect("/login");
+          if(snapshot.val() !== null) {
+            var active = snapshot.val().active;
+            var teacher = snapshot.val().teacher;
+            if(active == "false" || active == false) {
+              res.clearCookie("token");
+              res.redirect("/login");
+            }
           } else {
-            if(snapshot.val() == null) {
               var teacher = false;
-            } else {
-              var teacher = snapshot.val().teacher;
-            }
-
-            if(teacher == true || teacher == "true") {
-              const uid = decodedToken.sub;
-              res.sendFile(__dirname + location);
-            } else {
-              res.redirect("/");
-            }
+          }
+          if(teacher == true || teacher == "true") {
+            const uid = decodedToken.sub;
+            res.sendFile(__dirname + location);
+          } else {
+            res.redirect("/");
           }
         });
       })
@@ -92,9 +90,11 @@ function verifyRequest(req, res, location) {
           const uid = decodedToken.sub;
           var user = firebase.database().ref('users/' + decodedToken.uid);
           user.once('value').then(function(snapshot){
-            var active = snapshot.val().active;
-            if(active == true || active == "true" ) {
-              res.sendFile(__dirname + location);
+            if(snapshot.val() !== null) {
+              var active = snapshot.val().active;
+              if(active == true || active == "true" ) {
+                res.sendFile(__dirname + location);
+              }
             } else {
               res.clearCookie("token");
               res.redirect("/login");

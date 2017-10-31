@@ -56,12 +56,12 @@ function verifyRequest(req, res, callback, teacher, initial) {
         var user = firebase.database().ref('users/' + decodedToken.uid);
         if(teacher) {
           user.once('value').then(function(snapshot){
+		       if(snapshot.val() !== null) {
             var active = snapshot.val().active;
-            if(snapshot.val() == null) {
-              var teacher = false;
-            } else {
               var teacher = snapshot.val().teacher;
-            }
+           } else {
+              var teacher = false;
+           }
             if((teacher == true || teacher == "true") && (active == true || active == "true")) {
               const uid = decodedToken.sub;
               callback(true);
