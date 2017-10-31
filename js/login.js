@@ -27,7 +27,7 @@ function setAppCookie(email, initial, firstName, lastName, register) {
 		firebase.auth().currentUser.getIdToken().then(function(token) {
 				var user = firebase.database().ref('users/' + firebase.auth().currentUser.uid);
 				user.once('value').then(function(snapshot){
-					if(typeof(snapshot) !== "undefined") {
+					if(snapshot.val() !== null) {
 						var active = snapshot.val().active;
 					} else {
 						var active = false;

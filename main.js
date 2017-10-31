@@ -34,4 +34,4 @@ app.use("/api", express.static("api"));
 // The app is now running on port 80
 var port = process.env.PORT || 3000;
 app.listen(port);
-console.log("Server is running on port 80!");
+console.log("Server is running on port " + port);
